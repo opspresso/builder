@@ -5,6 +5,7 @@ SHELL_DIR=$(dirname $0)
 USERNAME=${1:-opspresso}
 REPONAME=${2:-builder}
 GITHUB_TOKEN=${3}
+SLACK_TOKEN=${4}
 
 CHANGED=
 
@@ -50,7 +51,7 @@ check() {
 
         if [ ! -z ${SLACK_TOKEN} ]; then
             ${SHELL_DIR}/slack.sh --token="${SLACK_TOKEN}" \
-                --color="good" --title="builder version updated" --emoji=":construction_worker:" "\`${NAME}\` ${NOW} > ${NEW}"
+                --color="good" --title="${REPONAME} version updated" --emoji=":construction_worker:" "\`${NAME}\` ${NOW} > ${NEW}"
             echo " slack ${NAME} ${NOW} > ${NEW} "
             echo
         fi
@@ -62,25 +63,13 @@ if [ ! -z ${GITHUB_TOKEN} ]; then
     git config --global user.email "bot@nalbam.com"
 fi
 
-if [ "${USERNAME}" == "opspresso" ]; then
-    check aws awscli
-    check kubernetes kubectl
-    check helm helm
-    check Azure draft
-fi
+check aws awscli
+check kubernetes kubectl
+check helm helm
+check Azure draft
 
 if [ ! -z ${GITHUB_TOKEN} ]; then
     echo
-
-    if [ "${USERNAME}" != "opspresso" ]; then
-        echo "# git remote add --track master opspresso github.com/opspresso/builder"
-        git remote add --track master opspresso https://github.com/opspresso/builder.git
-        echo
-
-        echo "# git pull opspresso master"
-        git pull opspresso master
-        echo
-    fi
 
     echo "# git push github.com/${USERNAME}/${REPONAME} master"
     git push -q https://${GITHUB_TOKEN}@github.com/${USERNAME}/${REPONAME}.git master
