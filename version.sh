@@ -4,8 +4,6 @@ SHELL_DIR=$(dirname $0)
 
 USERNAME=${1:-opspresso}
 REPONAME=${2:-builder}
-GITHUB_TOKEN=${3}
-SLACK_TOKEN=${4}
 
 CHANGED=
 
