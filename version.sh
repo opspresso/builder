@@ -47,7 +47,7 @@ check() {
             FOOTER="<https://github.com/${REPO}/${GIT_NAME}|${REPO}/${GIT_NAME}>"
             ${SHELL_DIR}/slack.sh --token="${SLACK_TOKEN}" \
                 --emoji=":construction_worker:" --username="valve" \
-                --footer="${FOOTER}" --footer_icon="https://assets-cdn.github.com/favicon.ico"
+                --footer="${FOOTER}" --footer_icon="https://assets-cdn.github.com/favicon.ico" \
                 --color="good" --title="${REPONAME} updated" "\`${NAME}\` ${NOW} > ${NEW}"
             echo " slack ${NAME} ${NOW} > ${NEW} "
             echo
