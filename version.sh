@@ -11,12 +11,14 @@ check() {
     REPO=$1
     NAME=$2
 
+    GIT_NAME="${3:-${NAME}}"
+
     mkdir -p ${SHELL_DIR}/versions
     touch ${SHELL_DIR}/versions/${NAME}
 
     NOW=$(cat ${SHELL_DIR}/versions/${NAME} | xargs)
 
-    if [ "${NAME}" == "aws-cli" ]; then
+    if [ "${NAME}" == "awscli" ]; then
         rm -rf target
         mkdir -p target
 
@@ -27,7 +29,7 @@ check() {
         echo
 
         NEW=$(ls target/awscli-bundle/packages/ | grep awscli | sed 's/awscli-//' | sed 's/.tar.gz//' | xargs)
-    elif [ "${NAME}" == "kubernetes" ]; then
+    elif [ "${NAME}" == "kubectl" ]; then
         NEW=$(curl -s https://storage.googleapis.com/kubernetes-release/release/stable.txt | xargs)
     else
         NEW=$(curl -s https://api.github.com/repos/${REPO}/${NAME}/releases/latest | grep tag_name | cut -d'"' -f4 | xargs)
@@ -41,14 +43,14 @@ check() {
         printf "${NEW}" > ${SHELL_DIR}/versions/${NAME}
         sed -i -e "s/ENV ${NAME} .*/ENV ${NAME} ${NEW}/g" ${SHELL_DIR}/Dockerfile
 
-        if [ ! -z ${GITHUB_TOKEN} ]; then
-            git add --all
-            git commit -m "${NAME} ${NEW}"
-            echo
-        fi
+        # if [ ! -z ${GITHUB_TOKEN} ]; then
+        #     git add --all
+        #     git commit -m "${NAME} ${NEW}"
+        #     echo
+        # fi
 
         if [ ! -z ${SLACK_TOKEN} ]; then
-            FOOTER="<https://github.com/${REPO}/${NAME}|${REPO}/${NAME}>"
+            FOOTER="<https://github.com/${REPO}/${GIT_NAME}|${REPO}/${GIT_NAME}>"
             ${SHELL_DIR}/slack.sh --token="${SLACK_TOKEN}" \
                 --emoji=":construction_worker:" --username="valve" \
                 --footer="${FOOTER}" --footer_icon="https://assets-cdn.github.com/favicon.ico"
@@ -64,12 +66,17 @@ if [ ! -z ${GITHUB_TOKEN} ]; then
     git config --global user.email "bot@nalbam.com"
 fi
 
-check aws aws-cli
-check kubernetes kubernetes
-check helm helm
-check Azure draft
+check "aws" "awscli" "aws-cli"
+check "kubernetes" "kubectl" "kubernetes"
+check "helm" "helm"
+check "Azure" "draft"
 
 if [ ! -z ${GITHUB_TOKEN} ]; then
+    echo
+    DATE=$(date +%Y%m%d)
+
+    git add --all
+    git commit -m "updated at ${DATE}"
     echo
 
     echo "# git push github.com/${USERNAME}/${REPONAME} master"
@@ -77,7 +84,6 @@ if [ ! -z ${GITHUB_TOKEN} ]; then
     echo
 
     # if [ ! -z ${CHANGED} ]; then
-    #     DATE=$(date +%Y%m%d)
     #     git tag ${DATE}
 
     #     echo "# git push github.com/${USERNAME}/${REPONAME} ${DATE}"
