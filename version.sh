@@ -40,14 +40,8 @@ check() {
     if [ "${NOW}" != "${NEW}" ]; then
         CHANGED=true
 
-        printf "${NEW}" > ${SHELL_DIR}/versions/${NAME}
+        echo "${NEW}" > ${SHELL_DIR}/versions/${NAME}
         sed -i -e "s/ENV ${NAME} .*/ENV ${NAME} ${NEW}/g" ${SHELL_DIR}/Dockerfile
-
-        # if [ ! -z ${GITHUB_TOKEN} ]; then
-        #     git add --all
-        #     git commit -m "${NAME} ${NEW}"
-        #     echo
-        # fi
 
         if [ ! -z ${SLACK_TOKEN} ]; then
             FOOTER="<https://github.com/${REPO}/${GIT_NAME}|${REPO}/${GIT_NAME}>"
