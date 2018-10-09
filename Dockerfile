@@ -4,16 +4,16 @@ FROM docker
 
 RUN apk add -v --update python py-pip bash curl git jq openssh perl
 
-ENV awscli 1.16.29
-ENV kubectl v1.12.1
+ENV aws-cli 1.16.29
+ENV kubernetes v1.12.1
 ENV helm v2.11.0
 ENV draft v0.16.0
 
-RUN pip install --upgrade awscli==${awscli} && \
+RUN pip install --upgrade awscli==${aws-cli} && \
     apk -v --purge del py-pip && \
     rm /var/cache/apk/*
 
-RUN curl -sLO https://storage.googleapis.com/kubernetes-release/release/${kubectl}/bin/linux/amd64/kubectl && \
+RUN curl -sLO https://storage.googleapis.com/kubernetes-release/release/${kubernetes}/bin/linux/amd64/kubectl && \
     chmod +x kubectl && mv kubectl /usr/local/bin/kubectl
 
 RUN curl -sL https://storage.googleapis.com/kubernetes-helm/helm-${helm}-linux-amd64.tar.gz | tar xz && \

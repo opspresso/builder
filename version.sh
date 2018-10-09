@@ -16,7 +16,7 @@ check() {
 
     NOW=$(cat ${SHELL_DIR}/versions/${NAME} | xargs)
 
-    if [ "${NAME}" == "awscli" ]; then
+    if [ "${NAME}" == "aws-cli" ]; then
         rm -rf target
         mkdir -p target
 
@@ -27,7 +27,7 @@ check() {
         echo
 
         NEW=$(ls target/awscli-bundle/packages/ | grep awscli | sed 's/awscli-//' | sed 's/.tar.gz//' | xargs)
-    elif [ "${NAME}" == "kubectl" ]; then
+    elif [ "${NAME}" == "kubernetes" ]; then
         NEW=$(curl -s https://storage.googleapis.com/kubernetes-release/release/stable.txt | xargs)
     else
         NEW=$(curl -s https://api.github.com/repos/${REPO}/${NAME}/releases/latest | grep tag_name | cut -d'"' -f4 | xargs)
@@ -48,8 +48,10 @@ check() {
         fi
 
         if [ ! -z ${SLACK_TOKEN} ]; then
+            FOOTER="<https://github.com/${REPO}/${NAME}|${REPO}/${NAME}>"
             ${SHELL_DIR}/slack.sh --token="${SLACK_TOKEN}" \
-                --emoji=":construction_worker:" --username="opspresso" \
+                --emoji=":construction_worker:" --username="valve" \
+                --footer="${FOOTER}" --footer_icon="https://assets-cdn.github.com/favicon.ico"
                 --color="good" --title="${REPONAME} updated" "\`${NAME}\` ${NOW} > ${NEW}"
             echo " slack ${NAME} ${NOW} > ${NEW} "
             echo
@@ -62,8 +64,8 @@ if [ ! -z ${GITHUB_TOKEN} ]; then
     git config --global user.email "bot@nalbam.com"
 fi
 
-check aws awscli
-check kubernetes kubectl
+check aws aws-cli
+check kubernetes kubernetes
 check helm helm
 check Azure draft
 
@@ -74,12 +76,12 @@ if [ ! -z ${GITHUB_TOKEN} ]; then
     git push -q https://${GITHUB_TOKEN}@github.com/${USERNAME}/${REPONAME}.git master
     echo
 
-    if [ ! -z ${CHANGED} ]; then
-        DATE=$(date +%Y%m%d)
-        git tag ${DATE}
+    # if [ ! -z ${CHANGED} ]; then
+    #     DATE=$(date +%Y%m%d)
+    #     git tag ${DATE}
 
-        echo "# git push github.com/${USERNAME}/${REPONAME} ${DATE}"
-        git push -q https://${GITHUB_TOKEN}@github.com/${USERNAME}/${REPONAME}.git ${DATE}
-        echo
-    fi
+    #     echo "# git push github.com/${USERNAME}/${REPONAME} ${DATE}"
+    #     git push -q https://${GITHUB_TOKEN}@github.com/${USERNAME}/${REPONAME}.git ${DATE}
+    #     echo
+    # fi
 fi
