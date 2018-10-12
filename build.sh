@@ -8,7 +8,7 @@ USERNAME=${CIRCLE_PROJECT_USERNAME:-opspresso}
 REPONAME=${CIRCLE_PROJECT_REPONAME:-builder}
 
 GIT_USERNAME="bot"
-GIT_USEREMAIL="sbl@nalbam.com"
+GIT_USEREMAIL="bot@nalbam.com"
 
 ################################################################################
 
