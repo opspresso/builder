@@ -1,23 +1,51 @@
+#
+# CircleCI 2.0
+#
 version: 2
 jobs:
-  build:
-    machine: true
+  package:
+    docker:
+      - image: circleci/python
+    working_directory: /tmp/workspace
     steps:
       - checkout
       - run:
-          name: Check Versions
+          name: Package
           command: |
-            chmod 755 ./version.sh
-            ./version.sh $CIRCLE_PROJECT_USERNAME $CIRCLE_PROJECT_REPONAME $GITHUB_TOKEN
+            chmod 755 ./build.sh
+            ./build.sh package
+      - persist_to_workspace:
+          root: /tmp/workspace
+          paths:
+            - target/*
+            - versions/*
+            - build.sh
+  release:
+    docker:
+      - image: circleci/golang
+    steps:
+      - attach_workspace:
+          at: workspace
+      - run:
+          name: Release
+          command: |
+            chmod 755 ./workspace/build.sh
+            ./workspace/build.sh release
 
 workflows:
   version: 2
   apply:
     jobs:
-      - build
+      - package
+      - release:
+          requires:
+            - package
   nightly:
     jobs:
-      - build
+      - package
+      - release:
+          requires:
+            - package
     triggers:
       - schedule:
           cron: "0 0 * * *"
