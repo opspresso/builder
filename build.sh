@@ -160,15 +160,11 @@ _check_version() {
 }
 
 _git_push() {
-    _gen_version
-
-    _result "VERSION=${VERSION}"
-
     # commit log
     LIST=/tmp/versions
     ls ${SHELL_DIR}/versions | sort > ${LIST}
 
-    echo "${REPONAME} ${VERSION}" > ${SHELL_DIR}/target/log
+    # echo "${REPONAME} ${VERSION}" > ${SHELL_DIR}/target/log
 
     while read VAL; do
         echo "${VAL} $(cat ${SHELL_DIR}/versions/${VAL} | xargs)" >> ${SHELL_DIR}/target/log
@@ -200,6 +196,10 @@ _cf_reset() {
 }
 
 _package() {
+    _gen_version
+
+    _result "VERSION=${VERSION}"
+
     _check_version "kubernetes" "kubectl" "kubernetes"
     _check_version "helm" "helm"
     _check_version "Azure" "draft"
