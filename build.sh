@@ -258,6 +258,9 @@ case ${CMD} in
     package)
         _package
         ;;
+    publish)
+        _publish
+        ;;
     release)
         _release
         ;;
