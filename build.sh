@@ -199,7 +199,6 @@ _package() {
     _gen_version
 
     _result "VERSION=${VERSION}"
-    _result "VERSION=${VERSION}"
 
     _check_version "kubernetes" "kubectl" "kubernetes"
     _check_version "helm" "helm"
