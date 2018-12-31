@@ -199,6 +199,7 @@ _package() {
     _gen_version
 
     _result "VERSION=${VERSION}"
+    _result "VERSION=${VERSION}"
 
     # REMOVE ME
     CHANGED=true
