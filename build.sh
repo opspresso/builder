@@ -208,8 +208,8 @@ _package() {
         _check_version "aws" "awscli" "aws-cli"
 
         _git_push
-    else
-        rm -rf ${SHELL_DIR}/target
+    # else
+    #     rm -rf ${SHELL_DIR}/target
     fi
 }
 
