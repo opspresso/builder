@@ -201,9 +201,6 @@ _package() {
     _result "VERSION=${VERSION}"
     _result "VERSION=${VERSION}"
 
-    # REMOVE ME
-    CHANGED=true
-
     _check_version "kubernetes" "kubectl" "kubernetes"
     _check_version "helm" "helm"
     _check_version "Azure" "draft"
