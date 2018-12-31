@@ -142,7 +142,7 @@ _slack() {
     VERSION=${3}
 
     if [ ! -z ${SLACK_TOKEN} ]; then
-        TITLE="${REPO} updated"
+        TITLE="${NAME} updated"
 
         FOOTER="<https://github.com/${REPO}/releases/tag/${VERSION}|${REPO}>"
 
