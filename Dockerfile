@@ -7,7 +7,6 @@ RUN apk add -v --update python py-pip bash curl git jq openssh perl busybox-extr
 ENV awscli 1.16.81
 ENV kubectl v1.13.1
 ENV helm v2.12.1
-ENV draft v0.16.0
 
 RUN pip install --upgrade awscli==${awscli} && \
     apk -v --purge del py-pip && \
@@ -18,9 +17,6 @@ RUN curl -sLO https://storage.googleapis.com/kubernetes-release/release/${kubect
 
 RUN curl -sL https://storage.googleapis.com/kubernetes-helm/helm-${helm}-linux-amd64.tar.gz | tar xz && \
     mv linux-amd64/helm /usr/local/bin/helm
-
-RUN curl -sL https://azuredraft.blob.core.windows.net/draft/draft-${draft}-linux-amd64.tar.gz | tar xz && \
-    mv linux-amd64/draft /usr/local/bin/draft
 
 COPY slack.sh /usr/local/bin/slack
 

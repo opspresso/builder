@@ -112,29 +112,13 @@ _gen_version() {
 }
 
 _check_version() {
-    REPO=${1}
-    NAME=${2}
-    G_NM=${3:-${NAME}}
+    NAME=${1}
+    REPO=${2}
 
     touch ${SHELL_DIR}/versions/${NAME}
+
     NOW=$(cat ${SHELL_DIR}/versions/${NAME} | xargs)
-
-    # NWO=$(cat ${SHELL_DIR}/Dockerfile | grep "ENV ${NAME}" | awk '{print $3}')
-
-    if [ "${NAME}" == "awscli" ]; then
-        pushd ${SHELL_DIR}/target
-        curl -sLO https://s3.amazonaws.com/aws-cli/awscli-bundle.zip
-        unzip awscli-bundle.zip
-        popd
-
-        NEW=$(ls ${SHELL_DIR}/target/awscli-bundle/packages/ | grep awscli | sed 's/awscli-//' | sed 's/.tar.gz//' | xargs)
-
-        rm -rf ${SHELL_DIR}/target/awscli-*
-    elif [ "${NAME}" == "kubectl" ]; then
-        NEW=$(curl -s https://storage.googleapis.com/kubernetes-release/release/stable.txt | xargs)
-    else
-        NEW=$(curl -s https://api.github.com/repos/${REPO}/${NAME}/releases/latest | grep tag_name | cut -d'"' -f4 | xargs)
-    fi
+    NEW=$(curl -sL ${BUCKET}/latest/${NAME} | xargs)
 
     _result "$(printf '%-10s %-10s %-10s' "${NAME}" "${NOW}" "${NEW}")"
 
@@ -144,18 +128,28 @@ _check_version() {
         printf "${NEW}" > ${SHELL_DIR}/versions/${NAME}
         printf "${NEW}" > ${SHELL_DIR}/target/dist/${NAME}
 
-        # replace version
+        # replace
         sed -i -e "s/ENV ${NAME} .*/ENV ${NAME} ${NEW}/g" ${SHELL_DIR}/Dockerfile
 
         # slack
-        if [ ! -z ${SLACK_TOKEN} ]; then
-            FOOTER="<https://github.com/${REPO}/${G_NM}|${REPO}/${G_NM}>"
-            ${SHELL_DIR}/slack.sh --token="${SLACK_TOKEN}" --channel="tools" \
-                --emoji=":construction_worker:" --username="valve" \
-                --footer="${FOOTER}" --footer_icon="https://assets-cdn.github.com/favicon.ico" \
-                --color="good" --title="${REPONAME} updated" "\`${NAME}\` ${NOW} > ${NEW}"
-            _result " slack ${NAME} ${NOW} > ${NEW} "
-        fi
+        _slack "${NAME}" "${REPO}" "${NEW}"
+    fi
+}
+
+_slack() {
+    NAME=${1}
+    REPO=${2}
+    VERSION=${3}
+
+    if [ ! -z ${SLACK_TOKEN} ]; then
+        TITLE="${REPO} updated"
+
+        FOOTER="<https://github.com/${REPO}/releases/tag/${VERSION}|${REPO}>"
+
+        ${SHELL_DIR}/slack.sh --token="${SLACK_TOKEN}" --channel="tools" \
+            --emoji=":construction_worker:" --username="${USERNAME}" \
+            --footer="${FOOTER}" --footer_icon="https://assets-cdn.github.com/favicon.ico" \
+            --color="good" --title="${TITLE}" "\`${VERSION}\`"
     fi
 }
 
@@ -200,12 +194,11 @@ _package() {
 
     _result "VERSION=${VERSION}"
 
-    _check_version "kubernetes" "kubectl" "kubernetes"
-    _check_version "helm" "helm"
-    _check_version "Azure" "draft"
+    _check_version "kubectl" "kubernetes/kubernetes"
+    _check_version "helm" "helm/helm"
 
     if [ ! -z ${GITHUB_TOKEN} ] && [ ! -z ${CHANGED} ]; then
-        _check_version "aws" "awscli" "aws-cli"
+        _check_version "awscli" "aws/aws-cli"
 
         _git_push
     else
