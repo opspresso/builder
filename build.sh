@@ -164,7 +164,7 @@ _git_push() {
     LIST=/tmp/versions
     ls ${SHELL_DIR}/versions | sort > ${LIST}
 
-    # echo "${REPONAME} ${VERSION}" > ${SHELL_DIR}/target/log
+    echo "${REPONAME} ${VERSION}" > ${SHELL_DIR}/target/log
 
     while read VAL; do
         echo "${VAL} $(cat ${SHELL_DIR}/versions/${VAL} | xargs)" >> ${SHELL_DIR}/target/log
@@ -200,6 +200,9 @@ _package() {
 
     _result "VERSION=${VERSION}"
 
+    # REMOVE ME
+    CHANGED=true
+
     _check_version "kubernetes" "kubectl" "kubernetes"
     _check_version "helm" "helm"
     _check_version "Azure" "draft"
@@ -208,8 +211,8 @@ _package() {
         _check_version "aws" "awscli" "aws-cli"
 
         _git_push
-    # else
-    #     rm -rf ${SHELL_DIR}/target
+    else
+        rm -rf ${SHELL_DIR}/target
     fi
 }
 
