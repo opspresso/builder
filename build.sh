@@ -195,7 +195,6 @@ _package() {
     _result "VERSION=${VERSION}"
 
     _check_version "kubectl" "kubernetes/kubernetes"
-    _check_version "aws-iam-authenticator" "kubernetes-sigs/aws-iam-authenticator"
     _check_version "helm" "helm/helm"
 
     if [ ! -z ${GITHUB_TOKEN} ] && [ ! -z ${CHANGED} ]; then
