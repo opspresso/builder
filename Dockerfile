@@ -4,9 +4,9 @@ FROM docker
 
 RUN apk add -v --update python py-pip bash curl git jq openssh perl busybox-extras
 
-ENV awscli 1.16.112
+ENV awscli 1.16.114
 ENV kubectl v1.13.3
-ENV helm v2.12.3
+ENV helm v2.13.0
 
 RUN pip install --upgrade awscli==${awscli} && \
     apk -v --purge del py-pip && \
