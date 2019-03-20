@@ -18,8 +18,6 @@ RUN curl -sLO https://storage.googleapis.com/kubernetes-release/release/${kubect
 RUN curl -sL https://storage.googleapis.com/kubernetes-helm/helm-${helm}-linux-amd64.tar.gz | tar xz && \
     mv linux-amd64/helm /usr/local/bin/helm
 
-COPY slack.sh /usr/local/bin/slack
-
 COPY .m2/ /root/.m2/
 
 ENTRYPOINT ["bash"]
