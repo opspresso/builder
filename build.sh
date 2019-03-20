@@ -118,7 +118,7 @@ _check_version() {
     touch ${SHELL_DIR}/versions/${NAME}
 
     NOW=$(cat ${SHELL_DIR}/versions/${NAME} | xargs)
-    NEW=$(curl -sL ${BUCKET}/latest/${NAME} | xargs)
+    NEW=$(curl -s https://api.github.com/repos/${REPO}/releases/latest | grep tag_name | cut -d'"' -f4 | xargs)
 
     _result "$(printf '%-25s %-25s %-25s' "${NAME}" "${NOW}" "${NEW}")"
 
