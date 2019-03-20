@@ -146,7 +146,8 @@ _slack() {
 
         FOOTER="<https://github.com/${REPO}/releases/tag/${VERSION}|${REPO}>"
 
-        ${SHELL_DIR}/slack.sh --token="${SLACK_TOKEN}" --channel="tools" \
+        curl -sL opspresso.com/tools/slack | bash -s -- \
+            --token="${SLACK_TOKEN}" --channel="tools" \
             --emoji=":construction_worker:" --username="${USERNAME}" \
             --footer="${FOOTER}" --footer_icon="https://assets-cdn.github.com/favicon.ico" \
             --color="good" --title="${TITLE}" "\`${VERSION}\`"
