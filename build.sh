@@ -206,9 +206,9 @@ _package() {
     _check_version "kubectl" "kubernetes/kubernetes"
     _check_version "helm" "helm/helm"
 
-    if [ ! -z ${GITHUB_TOKEN} ] && [ ! -z ${CHANGED} ]; then
-        _check_version "awscli" "aws/aws-cli"
+    _check_version "awscli" "aws/aws-cli"
 
+    if [ ! -z ${GITHUB_TOKEN} ] && [ ! -z ${CHANGED} ]; then
         _git_push
     else
         rm -rf ${SHELL_DIR}/target
