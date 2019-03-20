@@ -120,7 +120,7 @@ _check_version() {
     NOW=$(cat ${SHELL_DIR}/versions/${NAME} | xargs)
     NEW=$(curl -sL ${BUCKET}/latest/${NAME} | xargs)
 
-    _result "$(printf '%-10s %-10s %-10s' "${NAME}" "${NOW}" "${NEW}")"
+    _result "$(printf '%-25s %-25s %-25s' "${NAME}" "${NOW}" "${NEW}")"
 
     if [ "${NEW}" != "" ] && [ "${NEW}" != "${NOW}" ]; then
         CHANGED=true
