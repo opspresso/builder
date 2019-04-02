@@ -1,11 +1,15 @@
 #!/bin/bash
 
+OS_NAME="$(uname | awk '{print tolower($0)}')"
+
 SHELL_DIR=$(dirname $0)
 
 CMD=${1:-${CIRCLE_JOB}}
 
 USERNAME=${CIRCLE_PROJECT_USERNAME:-opspresso}
 REPONAME=${CIRCLE_PROJECT_REPONAME:-builder}
+
+BRANCH=${CIRCLE_BRANCH:-master}
 
 BUCKET="repo.opspresso.com"
 
@@ -45,6 +49,14 @@ _error() {
     echo
     _echo "- $@" 1
     exit 1
+}
+
+_replace() {
+    if [ "${OS_NAME}" == "darwin" ]; then
+        sed -i "" -e "$1" $2
+    else
+        sed -i -e "$1" $2
+    fi
 }
 
 _prepare() {
@@ -87,12 +99,12 @@ _gen_version() {
         VERSION=$(cat ${SHELL_DIR}/VERSION | xargs)
     fi
 
-    _result "CIRCLE_BRANCH=${CIRCLE_BRANCH}"
+    _result "BRANCH=${BRANCH}"
     _result "PR_NUM=${PR_NUM}"
     _result "PR_URL=${PR_URL}"
 
     # version
-    if [ "${CIRCLE_BRANCH}" == "master" ]; then
+    if [ "${BRANCH}" == "master" ]; then
         VERSION=$(echo ${VERSION} | perl -pe 's/^(([v\d]+\.)*)(\d+)(.*)$/$1.($3+1).$4/e')
         printf "${VERSION}" > ${SHELL_DIR}/target/VERSION
     else
@@ -152,7 +164,7 @@ _check_version() {
         printf "${NEW}" > ${SHELL_DIR}/target/dist/${NAME}
 
         # replace
-        sed -i -e "s/ENV ${NAME} .*/ENV ${NAME} ${CURR}/g" ${SHELL_DIR}/Dockerfile
+        _replace "s/ENV ${NAME} .*/ENV ${NAME} ${CURR}/g" ${SHELL_DIR}/Dockerfile
 
         # slack
         _slack "${NAME}" "${REPO}" "${NEW}"
@@ -165,11 +177,14 @@ _slack() {
     CURR=${3}
 
     if [ ! -z ${SLACK_TOKEN} ]; then
+        TITLE="${NAME} updated"
+
+        FOOTER="<https://github.com/${REPO}/releases/tag/${CURR}|${REPO}>"
+
         curl -sL opspresso.com/tools/slack | bash -s -- \
-            --token="${SLACK_TOKEN}" --username="${USERNAME}" \
-            --footer="<https://github.com/${REPO}/releases/tag/${CURR}|${REPO}>" \
-            --footer_icon="https://repo.opspresso.com/favicon/github.png" \
-            --color="good" --title="${NAME} updated" "\`${CURR}\`"
+            --token="${SLACK_TOKEN}" --emoji=":construction_worker:" --username="${USERNAME}" \
+            --footer="${FOOTER}" --footer_icon="https://repo.opspresso.com/favicon/github.png" \
+            --color="good" --title="${TITLE}" "\`${CURR}\`"
     fi
 }
 
@@ -203,7 +218,7 @@ _s3_sync() {
 }
 
 _cf_reset() {
-    CFID=$(aws cloudfront list-distributions --query "DistributionList.Items[].{Id:Id, DomainName: DomainName, OriginDomainName: Origins.Items[0].DomainName}[?contains(OriginDomainName, '${1}')] | [0].Id" | cut -d'"' -f2)
+    CFID=$(aws cloudfront list-distributions --query "DistributionList.Items[].{Id:Id, DomainName: DomainName, OriginDomainName: Origins.Items[0].DomainName}[?contains(OriginDomainName, '${1}')] | [0]" | jq -r '.Id')
     if [ "${CFID}" != "" ]; then
         aws cloudfront create-invalidation --distribution-id ${CFID} --paths "/*"
     fi
@@ -216,17 +231,29 @@ _package() {
 
     _check_version "kubectl" "kubernetes/kubernetes"
     _check_version "helm" "helm/helm"
+    _check_version "draft" "Azure/draft"
+
+    _check_version "awscli" "aws/aws-cli"
+    _check_version "awsauth" "kubernetes-sigs/aws-iam-authenticator" "v"
 
     if [ ! -z ${GITHUB_TOKEN} ] && [ ! -z ${CHANGED} ]; then
-        _check_version "awscli" "aws/aws-cli"
-
         _git_push
-
-        _s3_sync "${SHELL_DIR}/target/" "${BUCKET}/${REPONAME}"
-        _cf_reset "${BUCKET}"
     else
         rm -rf ${SHELL_DIR}/target
     fi
+}
+
+_publish() {
+    if [ ! -f ${SHELL_DIR}/target/VERSION ]; then
+        return
+    fi
+    if [ -f ${SHELL_DIR}/target/PRE ]; then
+        return
+    fi
+
+    _s3_sync "${SHELL_DIR}/target/" "${BUCKET}/${REPONAME}"
+
+    _cf_reset "${BUCKET}"
 }
 
 _release() {
@@ -260,6 +287,9 @@ _prepare
 case ${CMD} in
     package)
         _package
+        ;;
+    publish)
+        _publish
         ;;
     release)
         _release
