@@ -221,22 +221,12 @@ _package() {
         _check_version "awscli" "aws/aws-cli"
 
         _git_push
+
+        _s3_sync "${SHELL_DIR}/target/" "${BUCKET}/${REPONAME}"
+        _cf_reset "${BUCKET}"
     else
         rm -rf ${SHELL_DIR}/target
     fi
-}
-
-_publish() {
-    if [ ! -f ${SHELL_DIR}/target/VERSION ]; then
-        return
-    fi
-    if [ -f ${SHELL_DIR}/target/PRE ]; then
-        return
-    fi
-
-    _s3_sync "${SHELL_DIR}/target/" "${BUCKET}/${REPONAME}"
-
-    _cf_reset "${BUCKET}"
 }
 
 _release() {
@@ -270,9 +260,6 @@ _prepare
 case ${CMD} in
     package)
         _package
-        ;;
-    publish)
-        _publish
         ;;
     release)
         _release
