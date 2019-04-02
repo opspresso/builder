@@ -206,7 +206,7 @@ _s3_sync() {
 }
 
 _cf_reset() {
-    CFID=$(aws cloudfront list-distributions --query "DistributionList.Items[].{Id:Id, DomainName: DomainName, OriginDomainName: Origins.Items[0].DomainName}[?contains(OriginDomainName, '${1}')] | [0]" | jq -r '.Id')
+    CFID=$(aws cloudfront list-distributions --query "DistributionList.Items[].{Id:Id, DomainName: DomainName, OriginDomainName: Origins.Items[0].DomainName}[?contains(OriginDomainName, '${1}')] | [0].Id" | cut -d'"' -f2)
     if [ "${CFID}" != "" ]; then
         aws cloudfront create-invalidation --distribution-id ${CFID} --paths "/*"
     fi
