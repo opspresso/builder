@@ -6,7 +6,7 @@
 [![DockerHub Badge](http://dockeri.co/image/opspresso/builder)](https://hub.docker.com/r/opspresso/builder/)
 
 ```bash
-docker pull quay.io/opspresso/builder
+docker pull opspresso/builder
 ```
 
 ## versions
