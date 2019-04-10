@@ -3,6 +3,8 @@
 [![Docker Repository on Quay](https://quay.io/repository/opspresso/builder/status "Docker Repository on Quay")](https://quay.io/repository/opspresso/builder)
 [![GitHub release](https://img.shields.io/github/release/opspresso/builder.svg)](https://github.com/opspresso/builder/releases)
 
+[![DockerHub Badge](http://dockeri.co/image/opspresso/builder)](https://hub.docker.com/r/opspresso/builder/)
+
 ```bash
 docker pull quay.io/opspresso/builder
 ```
