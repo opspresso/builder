@@ -7,6 +7,7 @@
 
 ```bash
 docker pull opspresso/builder
+docker pull quay.io/opspresso/builder
 ```
 
 ## versions
