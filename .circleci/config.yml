@@ -45,15 +45,15 @@ jobs:
 
 workflows:
   version: 2
-  apply:
-    jobs:
-      - package
-      - publish:
-          requires:
-            - package
-      - release:
-          requires:
-            - package
+  # apply:
+  #   jobs:
+  #     - package
+  #     - publish:
+  #         requires:
+  #           - package
+  #     - release:
+  #         requires:
+  #           - package
   nightly:
     jobs:
       - package
