@@ -17,5 +17,5 @@ ENV awscli 1.16.144
 ENV awsauth 0.4.0
 ENV kubectl v1.12.8
 ENV helm v2.13.1
-ENV draft v0.16.0
+ENV argo 0
 ```

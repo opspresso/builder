@@ -8,7 +8,7 @@ ENV awscli 1.16.144
 ENV awsauth 0.4.0
 ENV kubectl v1.12.8
 ENV helm v2.13.1
-ENV draft v0.16.0
+ENV argo 0
 
 RUN pip install --upgrade awscli==${awscli} && \
     apk -v --purge del py-pip && \
@@ -23,8 +23,8 @@ RUN curl -sLO https://github.com/kubernetes-sigs/aws-iam-authenticator/releases/
 RUN curl -sL https://storage.googleapis.com/kubernetes-helm/helm-${helm}-linux-amd64.tar.gz | tar xz && \
     mv linux-amd64/helm /usr/local/bin/helm
 
-RUN curl -sL https://azuredraft.blob.core.windows.net/draft/draft-${draft}-linux-amd64.tar.gz | tar xz && \
-    mv linux-amd64/draft /usr/local/bin/draft
+RUN curl -sLO https://github.com/argoproj/argo/releases/download/${argo}/argo-linux-amd64 && \
+    chmod +x argo-linux-amd64 && mv argo-linux-amd64 /usr/local/bin/argo
 
 COPY .m2/ /root/.m2/
 
