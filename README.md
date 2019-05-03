@@ -13,9 +13,9 @@ docker pull quay.io/opspresso/builder
 ## versions
 
 ```
-ENV awscli 1.16.149
+ENV awscli 1.16.151
 ENV awsauth 0.4.0
 ENV kubectl v1.11.10
 ENV helm v2.13.1
-ENV argo 0.0
+ENV argo v2.2.1
 ```
