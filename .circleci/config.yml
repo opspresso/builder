@@ -12,7 +12,8 @@ jobs:
       - run:
           name: Package
           command: |
-            chmod 755 ./build.sh
+            chmod 755 *.sh
+            ./build-package.sh
             ./build.sh package
       - persist_to_workspace:
           root: /tmp/works
