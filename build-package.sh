@@ -157,7 +157,7 @@ _git_push() {
     LIST=/tmp/versions
     ls ${SHELL_DIR}/versions | sort > ${LIST}
 
-    echo "${REPONAME} ${VERSION}" > ${SHELL_DIR}/target/log
+    echo "${REPONAME}" > ${SHELL_DIR}/target/log
 
     while read VAL; do
         echo "${VAL} $(cat ${SHELL_DIR}/versions/${VAL} | xargs)" >> ${SHELL_DIR}/target/log
