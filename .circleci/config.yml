@@ -12,15 +12,15 @@ jobs:
       - run:
           name: Package
           command: |
-            chmod 755 *.sh
-            ./build.sh package
-            ./build-package.sh
+            mkdir target
+            curl -sLo target/builder.sh toast.sh/build
+            bash ./target/builder.sh package
+            bash ./build.sh
       - persist_to_workspace:
           root: /tmp/works
           paths:
             - target/*
             - versions/*
-            - build.sh
   publish:
     docker:
       - image: opspresso/awscli
@@ -30,8 +30,7 @@ jobs:
       - run:
           name: Publish
           command: |
-            chmod 755 ./works/build.sh
-            ./works/build.sh publish
+            bash ./works/builder.sh publish ./works
   release:
     docker:
       - image: circleci/golang
@@ -41,8 +40,7 @@ jobs:
       - run:
           name: Release
           command: |
-            chmod 755 ./works/build.sh
-            ./works/build.sh release
+            bash ./works/builder.sh release ./works
   slack:
     docker:
       - image: circleci/python
@@ -52,8 +50,7 @@ jobs:
       - run:
           name: Slack
           command: |
-            chmod 755 ./works/build.sh
-            ./works/build.sh slack
+            bash ./works/builder.sh slack ./works
 
 workflows:
   version: 2
