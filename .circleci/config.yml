@@ -13,8 +13,8 @@ jobs:
           name: Package
           command: |
             chmod 755 *.sh
-            ./build-package.sh
             ./build.sh package
+            ./build-package.sh
       - persist_to_workspace:
           root: /tmp/works
           paths:
