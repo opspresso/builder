@@ -79,7 +79,8 @@ _package() {
 
         _git_push
     else
-        rm -rf ${SHELL_DIR}/target
+        # rm -rf ${SHELL_DIR}/target
+        _error "no updated"
     fi
 }
 

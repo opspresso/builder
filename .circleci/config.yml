@@ -43,6 +43,17 @@ jobs:
           command: |
             chmod 755 ./works/build.sh
             ./works/build.sh release
+  slack:
+    docker:
+      - image: circleci/python
+    steps:
+      - attach_workspace:
+          at: works
+      - run:
+          name: Slack
+          command: |
+            chmod 755 ./works/build.sh
+            ./works/build.sh slack
 
 workflows:
   version: 2
@@ -55,6 +66,9 @@ workflows:
   #     - release:
   #         requires:
   #           - package
+  #     - slack:
+  #         requires:
+  #           - release
   nightly:
     jobs:
       - package
@@ -64,6 +78,9 @@ workflows:
       - release:
           requires:
             - package
+      - slack:
+          requires:
+            - release
     triggers:
       - schedule:
           cron: "5 * * * *"
