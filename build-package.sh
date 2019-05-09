@@ -48,7 +48,8 @@ _success() {
 _error() {
     echo
     _echo "- $@" 1
-    exit 1
+    # exit 1
+    circleci step halt
 }
 
 _replace() {
