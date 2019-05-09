@@ -48,8 +48,7 @@ _success() {
 _error() {
     echo
     _echo "- $@" 1
-    # exit 1
-    circleci step halt
+    exit 1
 }
 
 _replace() {
@@ -80,8 +79,9 @@ _package() {
 
         _git_push
     else
+        # _error "no updated"
         # rm -rf ${SHELL_DIR}/target
-        _error "no updated"
+        echo "stop" > ${SHELL_DIR}/target/circleci-stop
     fi
 }
 
