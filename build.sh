@@ -64,7 +64,7 @@ _prepare() {
     mkdir -p ${SHELL_DIR}/target/dist
 
     if [ -f ${SHELL_DIR}/target/circleci-stop ]; then
-        exit 0
+        _success "circleci-stop"
     fi
 }
 
