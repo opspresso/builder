@@ -4,7 +4,7 @@ OS_NAME="$(uname | awk '{print tolower($0)}')"
 
 SHELL_DIR=$(dirname $0)
 
-CMD=${1:-${CIRCLE_JOB}}
+CMD=${1:-$CIRCLE_JOB}
 
 RUN_PATH=${2:-$SHELL_DIR}
 
@@ -12,8 +12,6 @@ USERNAME=${CIRCLE_PROJECT_USERNAME:-opspresso}
 REPONAME=${CIRCLE_PROJECT_REPONAME:-builder}
 
 BRANCH=${CIRCLE_BRANCH:-master}
-
-BUCKET="repo.opspresso.com"
 
 GIT_USERNAME="bot"
 GIT_USEREMAIL="bot@nalbam.com"
