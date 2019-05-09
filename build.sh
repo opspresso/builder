@@ -6,6 +6,8 @@ SHELL_DIR=$(dirname $0)
 
 CMD=${1:-${CIRCLE_JOB}}
 
+RUN_PATH=${2:-$SHELL_DIR}
+
 USERNAME=${CIRCLE_PROJECT_USERNAME:-opspresso}
 REPONAME=${CIRCLE_PROJECT_REPONAME:-builder}
 
@@ -61,11 +63,12 @@ _replace() {
 
 _prepare() {
     # target
-    mkdir -p ${SHELL_DIR}/target/dist
-    mkdir -p ${SHELL_DIR}/versions
+    mkdir -p ${RUN_PATH}/target/publish
+    mkdir -p ${RUN_PATH}/target/release
+    mkdir -p ${RUN_PATH}/versions
 
     # 755
-    find ./** | grep [.]sh | xargs chmod 755
+    find ${RUN_PATH}/** | grep [.]sh | xargs chmod 755
 }
 
 _package() {
@@ -79,9 +82,7 @@ _package() {
 
         _git_push
     else
-        # _error "no updated"
-        # rm -rf ${SHELL_DIR}/target
-        echo "stop" > ${SHELL_DIR}/target/circleci-stop
+        echo "stop" > ${RUN_PATH}/target/circleci-stop
     fi
 }
 
@@ -90,19 +91,19 @@ _check_version() {
     REPO=${2}
     TRIM=${3}
 
-    touch ${SHELL_DIR}/versions/${NAME}
+    touch ${RUN_PATH}/versions/${NAME}
 
-    NOW=$(cat ${SHELL_DIR}/versions/${NAME} | xargs)
+    NOW=$(cat ${RUN_PATH}/versions/${NAME} | xargs)
 
     if [ "${NAME}" == "awscli" ]; then
-        pushd ${SHELL_DIR}/target
+        pushd ${RUN_PATH}/target
         curl -sLO https://s3.amazonaws.com/aws-cli/awscli-bundle.zip
         unzip awscli-bundle.zip
         popd
 
-        NEW=$(ls ${SHELL_DIR}/target/awscli-bundle/packages/ | grep awscli | sed 's/awscli-//' | sed 's/.tar.gz//' | xargs)
+        NEW=$(ls ${RUN_PATH}/target/awscli-bundle/packages/ | grep awscli | sed 's/awscli-//' | sed 's/.tar.gz//' | xargs)
 
-        rm -rf ${SHELL_DIR}/target/awscli-*
+        rm -rf ${RUN_PATH}/target/awscli-*
     else
         NEW=$(curl -s https://api.github.com/repos/${REPO}/releases/latest | grep tag_name | cut -d'"' -f4 | xargs)
     fi
@@ -122,12 +123,12 @@ _check_version() {
     if [ "${NEW}" != "${NOW}" ]; then
         CHANGED=true
 
-        printf "${NEW}" > ${SHELL_DIR}/versions/${NAME}
-        printf "${NEW}" > ${SHELL_DIR}/target/dist/${NAME}
+        printf "${NEW}" > ${RUN_PATH}/versions/${NAME}
+        printf "${NEW}" > ${RUN_PATH}/target/release/${NAME}
 
         # replace
-        _replace "s/ENV ${NAME} .*/ENV ${NAME} ${CURR}/g" ${SHELL_DIR}/Dockerfile
-        _replace "s/ENV ${NAME} .*/ENV ${NAME} ${CURR}/g" ${SHELL_DIR}/README.md
+        _replace "s/ENV ${NAME} .*/ENV ${NAME} ${CURR}/g" ${RUN_PATH}/Dockerfile
+        _replace "s/ENV ${NAME} .*/ENV ${NAME} ${CURR}/g" ${RUN_PATH}/README.md
 
         # slack
         _slack "${NAME}" "${REPO}" "${NEW}"
@@ -156,12 +157,12 @@ _git_push() {
 
     # commit log
     LIST=/tmp/versions
-    ls ${SHELL_DIR}/versions | sort > ${LIST}
+    ls ${RUN_PATH}/versions | sort > ${LIST}
 
-    echo "${REPONAME}" > ${SHELL_DIR}/target/log
+    echo "${REPONAME}" > ${RUN_PATH}/target/log
 
     while read VAL; do
-        echo "${VAL} $(cat ${SHELL_DIR}/versions/${VAL} | xargs)" >> ${SHELL_DIR}/target/log
+        echo "${VAL} $(cat ${RUN_PATH}/versions/${VAL} | xargs)" >> ${RUN_PATH}/target/log
     done < ${LIST}
 
     git config --global user.name "${GIT_USERNAME}"
@@ -170,8 +171,8 @@ _git_push() {
     _command "git add --all"
     git add --all
 
-    _command "git commit -m $(cat ${SHELL_DIR}/target/log)"
-    git commit -m "$(cat ${SHELL_DIR}/target/log)"
+    _command "git commit -m $(cat ${RUN_PATH}/target/log)"
+    git commit -m "$(cat ${RUN_PATH}/target/log)"
 
     _command "git push github.com/${USERNAME}/${REPONAME} ${BRANCH}"
     git push -q https://${GITHUB_TOKEN}@github.com/${USERNAME}/${REPONAME}.git ${BRANCH}
