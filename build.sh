@@ -75,8 +75,8 @@ _package() {
 
     if [ ! -z ${CHANGED} ]; then
         # _check_version "awsauth" "kubernetes-sigs/aws-iam-authenticator" "v"
-        _check_version "awscli" "aws/aws-cli"
-        _check_version "hub" "github/hub" "v"
+        # _check_version "awscli" "aws/aws-cli"
+        # _check_version "hub" "github/hub" "v"
 
         _git_push
 
