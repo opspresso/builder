@@ -69,13 +69,14 @@ _prepare() {
 }
 
 _package() {
-    _check_version "kubectl" "kubernetes/kubernetes"
-    _check_version "helm" "helm/helm"
     _check_version "argo" "argoproj/argo"
+    _check_version "helm" "helm/helm"
+    _check_version "kubectl" "kubernetes/kubernetes"
 
     if [ ! -z ${CHANGED} ]; then
-        _check_version "awscli" "aws/aws-cli"
         # _check_version "awsauth" "kubernetes-sigs/aws-iam-authenticator" "v"
+        _check_version "awscli" "aws/aws-cli"
+        _check_version "hub" "github/hub" "v"
 
         _git_push
 
