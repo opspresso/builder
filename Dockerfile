@@ -2,16 +2,15 @@
 
 FROM docker
 
-RUN apk add -v --update python3 python3-dev bash curl git jq openssh perl busybox-extras
+RUN apk add -v --update python3 python3-dev bash curl git hub jq perl openssh busybox-extras
 
 ENV awscli 1.16.154
-ENV awsauth 0.3.0
+ENV awsauth 0.2.0
 ENV kubectl v1.13.6
 ENV helm v2.13.1
 ENV argo v2.2.1
 
 RUN pip3 install --upgrade awscli==${awscli} && \
-    pip3 install --upgrade git-pull-request && \
     rm /var/cache/apk/*
 
 RUN curl -sLO https://storage.googleapis.com/kubernetes-release/release/${kubectl}/bin/linux/amd64/kubectl && \
