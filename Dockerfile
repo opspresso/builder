@@ -11,6 +11,7 @@ ENV helm v2.13.1
 ENV argo v2.2.1
 
 RUN pip3 install --upgrade awscli==${awscli} && \
+    pip3 install --upgrade git-pull-request && \
     rm /var/cache/apk/*
 
 RUN curl -sLO https://storage.googleapis.com/kubernetes-release/release/${kubectl}/bin/linux/amd64/kubectl && \
