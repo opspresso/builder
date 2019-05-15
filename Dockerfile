@@ -8,7 +8,7 @@ ENV argo v2.2.1
 ENV awsauth 0.3.0
 ENV awscli 1.16.154
 ENV helm v2.13.1
-ENV hub 2.11.1
+ENV hub 2.8.3
 ENV kubectl v1.13.6
 
 RUN pip3 install --upgrade awscli==${awscli} && \
