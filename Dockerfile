@@ -9,7 +9,7 @@ ENV awsauth 0.3.0
 ENV awscli 1.16.154
 ENV helm v2.14.0
 ENV hub 2.11.2
-ENV kubectl v1.13.6
+ENV kubectl v1.14.2
 
 RUN pip3 install --upgrade awscli==${awscli} && \
     rm /var/cache/apk/*
