@@ -4,7 +4,7 @@ FROM docker
 
 RUN apk add -v --update python3 python3-dev bash curl git jq perl openssh busybox-extras
 
-ENV argo v2.2.1
+ENV argo v2.3.0
 ENV awsauth 0.3.0
 ENV awscli 1.16.154
 ENV helm v2.14.0
