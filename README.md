@@ -17,5 +17,5 @@ ENV awsauth 0.3.0
 ENV awscli 1.16.154
 ENV helm v2.14.1
 ENV hub 2.11.2
-ENV kubectl v1.12.9
+ENV kubectl v1.14.3
 ```
