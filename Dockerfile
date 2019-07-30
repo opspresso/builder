@@ -7,7 +7,7 @@ RUN apk add -v --update python3 python3-dev bash curl git jq perl openssh busybo
 ENV argo v2.3.0
 ENV awsauth 0.3.0
 ENV awscli 1.16.154
-ENV helm v2.14.2
+ENV helm v2.14.3
 ENV hub 2.11.2
 ENV kubectl v1.15.1
 
