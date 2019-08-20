@@ -91,8 +91,7 @@ def load_variables() {
     """
 
     if (!fileExists("${path}")) {
-        // echo "no file ${path}"
-        // return
+        echo "load_variables:no file ${path}"
         throw new RuntimeException("no file ${path}")
     }
 
@@ -142,7 +141,8 @@ def scan_langusge(target = "", target_lang = "") {
 
 def env_cluster(cluster = "") {
     if (!cluster) {
-        // throw new RuntimeException("env_cluster:cluster is null.")
+        echo "env_cluster:cluster is null."
+        // throw new RuntimeException("cluster is null.")
         return
     }
 
@@ -474,6 +474,7 @@ def deploy(cluster = "", namespace = "", sub_domain = "", profile = "", values_p
         if (values_home) {
             count = sh(script: "ls ${values_home}/${name} | grep '${namespace}.yaml' | wc -l", returnStdout: true).trim()
             if ("${count}" == "0") {
+                echo "deploy:values_path not found."
                 throw new RuntimeException("values_path not found.")
             } else {
                 values_path = "${values_home}/${name}/${namespace}.yaml"
@@ -526,7 +527,7 @@ def deploy(cluster = "", namespace = "", sub_domain = "", profile = "", values_p
 def scan_helm(cluster = "", namespace = "") {
     // must have cluster
     if (!cluster) {
-        echo "remove:cluster is null."
+        echo "scan_helm:cluster is null."
         throw new RuntimeException("cluster is null.")
     }
     env_cluster(cluster)
@@ -583,15 +584,15 @@ def scan_charts_version(mychart = "", latest = false) {
 
 def rollback(cluster = "", namespace = "", revision = "") {
     if (!name) {
-        echo "remove:name is null."
+        echo "rollback:name is null."
         throw new RuntimeException("name is null.")
     }
     if (!cluster) {
-        echo "remove:cluster is null."
+        echo "rollback:cluster is null."
         throw new RuntimeException("cluster is null.")
     }
     if (!namespace) {
-        echo "remove:namespace is null."
+        echo "rollback:namespace is null."
         throw new RuntimeException("namespace is null.")
     }
     if (!revision) {
@@ -732,11 +733,11 @@ def failure(token = "", type = "") {
 
 def success(token = "", type = "") {
     if (!name) {
-        echo "failure:name is null."
+        echo "success:name is null."
         throw new RuntimeException("name is null.")
     }
     if (!version) {
-        echo "failure:version is null."
+        echo "success:version is null."
         throw new RuntimeException("version is null.")
     }
     if (cluster && sub_domain) {
