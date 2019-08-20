@@ -41,25 +41,22 @@ def set_version(version = "") {
         date = (new Date()).format('yyyyMMdd-HHmm')
         version = "v0.0.1-${date}"
     }
-
     echo "# version: ${version}"
     this.version = version
 }
 
-def get_version() {
-    if (!version) {
-        throw new RuntimeException("No version")
-    }
+// def get_version() {
+//     if (!version) {
+//         throw new RuntimeException("No version")
+//     }
+//     echo "# version: ${version}"
+//     this.version
+// }
 
-    echo "# version: ${version}"
-    this.version
-}
-
-def set_values_home(values_home = "") {
-    this.values_home = values_home
-
-    echo "# values_home: ${values_home}"
-}
+// def set_values_home(values_home = "") {
+//     echo "# values_home: ${values_home}"
+//     this.values_home = values_home
+// }
 
 def scan(source_lang = "") {
     this.source_lang = source_lang
