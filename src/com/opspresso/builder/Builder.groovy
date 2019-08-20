@@ -78,7 +78,7 @@ def scan(source_lang = "") {
 }
 
 def load_variables() {
-    path = "${home}/Variables.groovy"
+    path = "./Variables.groovy"
 
     // groovy variables
     sh """
