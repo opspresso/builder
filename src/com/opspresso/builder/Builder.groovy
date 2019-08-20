@@ -10,9 +10,8 @@ def debug() {
 
 def prepare(name = "sample", version = "") {
     // image name
-    this.name = name
-
     echo "# name: ${name}"
+    this.name = name
 
     set_version(version)
 
@@ -30,6 +29,11 @@ def prepare(name = "sample", version = "") {
     // this.nexus = ""
 
     this.values_home = ""
+
+    sh """
+        mkdir -p build
+        mkdir -p target
+    """
 
     // this cluster
     load_variables()
@@ -78,7 +82,7 @@ def scan(source_lang = "") {
 }
 
 def load_variables() {
-    path = "./Variables.groovy"
+    path = "./build/Variables.groovy"
 
     // groovy variables
     sh """
