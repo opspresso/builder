@@ -73,11 +73,11 @@ def scan(source_lang = "") {
 def load_variables() {
     // groovy variables
     sh """
-        kubectl get secret groovy-variables -n default -o json | jq -r .data.groovy | base64 -d > /tmp/Variables.groovy && \
-        cat /tmp/Variables.groovy | grep def
+        kubectl get secret groovy-variables -n default -o json | jq -r .data.groovy | base64 -d > ${home}/Variables.groovy && \
+        cat ${home}/Variables.groovy | grep def
     """
 
-    def val = load "/tmp/Variables.groovy"
+    def val = load "${home}/Variables.groovy"
 
     this.slack_token = val.slack_token
     this.base_domain = val.base_domain
