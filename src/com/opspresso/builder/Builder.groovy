@@ -18,9 +18,18 @@ def prepare(name = "sample", version = "") {
 
     this.cluster = ""
     this.namespace = ""
-    this.sub_domain = ""
-    this.values_home = ""
+
     this.slack_token = ""
+    this.base_domain = ""
+    this.sub_domain = ""
+
+    this.jenkins = ""
+    this.chartmuseum = ""
+    this.registry = ""
+    this.sonarqube = ""
+    this.nexus = ""
+
+    this.values_home = ""
 
     // this cluster
     load_variables()
