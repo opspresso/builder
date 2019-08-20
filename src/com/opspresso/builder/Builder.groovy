@@ -71,11 +71,18 @@ def scan(source_lang = "") {
 }
 
 def load_variables() {
+    path = "${home}/Variables.groovy"
+
     // groovy variables
     sh """
-        kubectl get secret groovy-variables -n default -o json | jq -r .data.groovy | base64 -d > ${home}/Variables.groovy && \
-        cat ${home}/Variables.groovy | grep def
+        kubectl get secret groovy-variables -n default -o json | jq -r .data.groovy | base64 -d > ${path} && \
+        cat ${path} | grep def
     """
+
+    if (!fileExists("${path}")) {
+        echo "no file ${path}"
+        return
+    }
 
     def val = load "${home}/Variables.groovy"
 
