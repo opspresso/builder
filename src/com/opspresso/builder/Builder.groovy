@@ -528,7 +528,7 @@ def scan_images_version(image_name = "", latest = false) {
     if (!chartmuseum) {
         load_variables()
     }
-    if(latest) {
+    if (latest) {
       list = sh(script: "curl -X GET https://${registry}/v2/${image_name}/tags/list | jq -r '.tags[]' | sort -r | head -n 1", returnStdout: true).trim()
     } else {
       list = sh(script: "curl -X GET https://${registry}/v2/${image_name}/tags/list | jq -r '.tags[]' | sort -r", returnStdout: true).trim()
