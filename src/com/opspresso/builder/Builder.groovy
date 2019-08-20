@@ -76,7 +76,7 @@ def load_variables() {
 
     // groovy variables
     sh """
-        kubectl get secret groovy-variables -n default -o json | jq -r .data.groovy | base64 -d > ${path} && \
+        kubectl get secret groovy-variables -n default -o json | jq -r .data.groovy | base64 -d > ${path}
         cat ${path} | grep def
     """
 
@@ -119,8 +119,8 @@ def scan_langusge(target = "", target_lang = "") {
                     def mirror_xml = "<mirror><id>mirror</id><url>${mirror_url}</url><mirrorOf>${mirror_of}</mirrorOf></mirror>"
 
                     sh """
-                        mkdir -p ${m2_home} && \
-                        cp -f /root/.m2/settings.xml ${m2_home}/settings.xml && \
+                        mkdir -p ${m2_home}
+                        cp -f /root/.m2/settings.xml ${m2_home}/settings.xml
                         sed -i -e \"s|<!-- ### configured mirrors ### -->|${mirror_xml}|\" ${m2_home}/settings.xml
                     """
                 }
@@ -136,7 +136,7 @@ def env_cluster(cluster = "") {
     }
 
     sh """
-        rm -rf ${home}/.aws && mkdir -p ${home}/.aws && \
+        rm -rf ${home}/.aws && mkdir -p ${home}/.aws
         rm -rf ${home}/.kube && mkdir -p ${home}/.kube
     """
 
@@ -152,7 +152,7 @@ def env_cluster(cluster = "") {
     sh """
         kubectl get secret kube-config-${cluster} -n devops -o json | jq -r .data.aws | base64 -d > ${home}/aws_config
         kubectl get secret kube-config-${cluster} -n devops -o json | jq -r .data.text | base64 -d > ${home}/kube_config
-        cp ${home}/aws_config ${home}/.aws/config && \
+        cp ${home}/aws_config ${home}/.aws/config
         cp ${home}/kube_config ${home}/.kube/config
     """
 
@@ -236,8 +236,8 @@ def make_chart(path = "", latest = false) {
 
     dir("${path}") {
         sh """
-            sed -i -e \"s/name: .*/name: ${name}/\" Chart.yaml && \
-            sed -i -e \"s/version: .*/version: ${version}/\" Chart.yaml && \
+            sed -i -e \"s/name: .*/name: ${name}/\" Chart.yaml
+            sed -i -e \"s/version: .*/version: ${version}/\" Chart.yaml
             sed -i -e \"s/tag: .*/tag: ${app_version}/g\" values.yaml
         """
 
@@ -266,7 +266,7 @@ def build_chart(path = "") {
     count = sh(script: "helm plugin list | grep 'Push chart package' | wc -l", returnStdout: true).trim()
     if ("${count}" == "0") {
         sh """
-            helm plugin install https://github.com/chartmuseum/helm-push && \
+            helm plugin install https://github.com/chartmuseum/helm-push
             helm plugin list
         """
     }
@@ -282,7 +282,7 @@ def build_chart(path = "") {
 
     // helm repo
     sh """
-        helm repo update && \
+        helm repo update
         helm search ${name}
     """
 }
@@ -303,7 +303,7 @@ def build_image() {
 
 def helm_init() {
     sh """
-        helm init --client-only && \
+        helm init --client-only
         helm version
     """
 
@@ -312,7 +312,7 @@ def helm_init() {
     }
 
     sh """
-        helm repo list && \
+        helm repo list
         helm repo update
     """
 }
@@ -385,7 +385,7 @@ def deploy_only(deploy_name = "", version = "", cluster = "", namespace = "", su
     """
 
     sh """
-        helm search ${name} && \
+        helm search ${name}
         helm history ${name}-${namespace} --max 10
     """
 }
@@ -507,7 +507,7 @@ def deploy(cluster = "", namespace = "", sub_domain = "", profile = "", values_p
     }
 
     sh """
-        helm search ${name} && \
+        helm search ${name}
         helm history ${name}-${namespace} --max 10
     """
 }
@@ -594,7 +594,7 @@ def rollback(cluster = "", namespace = "", revision = "") {
     helm_init()
 
     sh """
-        helm search ${name} && \
+        helm search ${name}
         helm history ${name}-${namespace} --max 10
     """
 
@@ -622,7 +622,7 @@ def remove(cluster = "", namespace = "") {
     helm_init()
 
     sh """
-        helm search ${name} && \
+        helm search ${name}
         helm history ${name}-${namespace} --max 10
     """
 
