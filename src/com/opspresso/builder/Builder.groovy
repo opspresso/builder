@@ -714,12 +714,21 @@ def success(token = "", type = "") {
         echo "success:version is null."
         throw new RuntimeException("version is null.")
     }
-    if (cluster && sub_domain) {
-        def link = "https://${sub_domain}.${base_domain}"
-        slack(token, "good", "${type} Success", "`${name}` `${version}` :satellite: `${namespace}` :earth_asia: `${cluster}`", "${JOB_NAME} <${RUN_DISPLAY_URL}|#${BUILD_NUMBER}> : <${link}|${name}-${namespace}>")
+    def title = "${type} Success"
+    def message = ""
+    def footer = ""
+    if (sub_domain) {
+        if (cluster) {
+            message = "`${name}` `${version}` :satellite: `${namespace}` :earth_asia: `${cluster}`"
+        } else {
+            message = "`${name}` `${version}` :satellite: `${namespace}`"
+        }
+        footer = "${JOB_NAME} <${RUN_DISPLAY_URL}|#${BUILD_NUMBER}> : <https://${sub_domain}.${base_domain}|${name}-${namespace}>"
     } else {
-        slack(token, "good", "${type} Success", "`${name}` `${version}` :heavy_check_mark:", "${JOB_NAME} <${RUN_DISPLAY_URL}|#${BUILD_NUMBER}>")
+        message = "`${name}` `${version}` :heavy_check_mark:"
+        footer = "${JOB_NAME} <${RUN_DISPLAY_URL}|#${BUILD_NUMBER}>"
     }
+    slack(token, "good", title, message, "${JOB_NAME} <${RUN_DISPLAY_URL}|#${BUILD_NUMBER}>")
 }
 
 def proceed(token = "", type = "", namespace = "") {
