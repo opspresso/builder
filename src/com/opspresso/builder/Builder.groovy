@@ -334,7 +334,7 @@ def apply(cluster = "", namespace = "", type = "", yaml = "") {
     }
     if (!cluster) {
         echo "apply:cluster is null."
-        throw new RuntimeException("cluster is null.")
+        // throw new RuntimeException("cluster is null.")
     }
     if (!namespace) {
         echo "apply:namespace is null."
@@ -345,7 +345,11 @@ def apply(cluster = "", namespace = "", type = "", yaml = "") {
         type = "secret"
     }
     if (!yaml) {
-        yaml = "${type}/${cluster}/${namespace}/${name}.yaml"
+        if (!cluster) {
+            yaml = "${type}/${namespace}/${name}.yaml"
+        } else {
+            yaml = "${type}/${cluster}/${namespace}/${name}.yaml"
+        }
     }
 
     // yaml
@@ -370,32 +374,6 @@ def apply(cluster = "", namespace = "", type = "", yaml = "") {
     """
 }
 
-def deploy_only(deploy_name = "", version = "", cluster = "", namespace = "", sub_domain = "", profile = "", values_path = "") {
-
-    // env cluster
-    env_cluster(cluster)
-
-    // env namespace
-    env_namespace(namespace)
-
-    // helm init
-    helm_init()
-
-    sh """
-        helm upgrade --install ${deploy_name} chartmuseum/${name} \
-            --namespace ${namespace} --devel \
-            --values ${values_path} \
-            --set namespace=${namespace} \
-            --set ingress.basedomain=${base_domain} \
-            --set profile=${profile}
-    """
-
-    sh """
-        helm search ${name}
-        helm history ${name}-${namespace} --max 10
-    """
-}
-
 def deploy(cluster = "", namespace = "", sub_domain = "", profile = "", values_path = "") {
     if (!name) {
         echo "deploy:name is null."
@@ -407,7 +385,7 @@ def deploy(cluster = "", namespace = "", sub_domain = "", profile = "", values_p
     }
     if (!cluster) {
         echo "deploy:cluster is null."
-        throw new RuntimeException("cluster is null.")
+        // throw new RuntimeException("cluster is null.")
     }
     if (!namespace) {
         echo "deploy:namespace is null."
@@ -523,8 +501,9 @@ def scan_helm(cluster = "", namespace = "") {
     // must have cluster
     if (!cluster) {
         echo "scan_helm:cluster is null."
-        throw new RuntimeException("cluster is null.")
+        // throw new RuntimeException("cluster is null.")
     }
+
     env_cluster(cluster)
 
     // admin can scan all images,
@@ -584,7 +563,7 @@ def rollback(cluster = "", namespace = "", revision = "") {
     }
     if (!cluster) {
         echo "rollback:cluster is null."
-        throw new RuntimeException("cluster is null.")
+        // throw new RuntimeException("cluster is null.")
     }
     if (!namespace) {
         echo "rollback:namespace is null."
@@ -615,7 +594,7 @@ def remove(cluster = "", namespace = "") {
     }
     if (!cluster) {
         echo "remove:cluster is null."
-        throw new RuntimeException("cluster is null.")
+        // throw new RuntimeException("cluster is null.")
     }
     if (!namespace) {
         echo "remove:namespace is null."
