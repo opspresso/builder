@@ -30,11 +30,6 @@ def prepare(name = "sample", version = "") {
 
     this.values_home = ""
 
-    sh """
-        mkdir -p build
-        mkdir -p target
-    """
-
     // this cluster
     load_variables()
 }
@@ -82,7 +77,7 @@ def scan(source_lang = "") {
 }
 
 def load_variables() {
-    path = "./build/Variables.groovy"
+    path = "./Variables.groovy"
 
     // groovy variables
     sh """
