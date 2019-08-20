@@ -20,6 +20,7 @@ def prepare(name = "sample", version = "") {
     this.namespace = ""
     this.sub_domain = ""
     this.values_home = ""
+    this.slack_token = ""
 
     // this cluster
     load_variables()
@@ -32,15 +33,15 @@ def set_version(version = "") {
         version = "v0.0.1-${date}"
     }
 
-    this.version = version
-
     echo "# version: ${version}"
+    this.version = version
 }
 
 def get_version() {
     if (!version) {
         throw new RuntimeException("No version")
     }
+
     echo "# version: ${version}"
     this.version
 }
@@ -84,7 +85,7 @@ def load_variables() {
         return
     }
 
-    def val = load "${home}/Variables.groovy"
+    def val = load "${path}"
 
     this.slack_token = val.slack_token
     this.base_domain = val.base_domain
