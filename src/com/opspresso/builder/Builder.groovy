@@ -23,11 +23,11 @@ def prepare(name = "sample", version = "") {
     this.base_domain = ""
     this.sub_domain = ""
 
-    this.jenkins = ""
-    this.chartmuseum = ""
-    this.registry = ""
-    this.sonarqube = ""
-    this.nexus = ""
+    // this.jenkins = ""
+    // this.chartmuseum = ""
+    // this.registry = ""
+    // this.sonarqube = ""
+    // this.nexus = ""
 
     this.values_home = ""
 
@@ -87,8 +87,9 @@ def load_variables() {
     """
 
     if (!fileExists("${path}")) {
-        echo "no file ${path}"
-        return
+        // echo "no file ${path}"
+        // return
+        throw new RuntimeException("no file ${path}")
     }
 
     def val = load "${path}"
