@@ -1,0 +1,25 @@
+name: Build-Cron
+
+on:
+  schedule:
+    - cron: "0 * * * *"
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v1
+
+      - name: Check Version
+        run: |
+          bash ./build.sh
+
+      - name: Commit & Push
+        uses: opspresso/action-builder@master
+        with:
+          args: --commit
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          MESSAGE_PATH: ./target/commit_message
