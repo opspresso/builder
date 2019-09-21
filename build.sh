@@ -83,7 +83,7 @@ _check_version() {
 
     NOW=$(cat ${SHELL_DIR}/Dockerfile | grep "ENV ${NAME}" | awk '{print $3}' | xargs)
 
-    NEW=$(curl -sL repo.opspresso.com/latest/${REPO} | xargs)
+    NEW=$(curl -sL repo.opspresso.com/latest/${NAME} | xargs)
 
     if [ "${NEW}" == "" ]; then
         return
