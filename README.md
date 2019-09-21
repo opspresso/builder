@@ -1,7 +1,7 @@
 # builder
 
+[![GitHub Actions status](https://github.com/opspresso/builder/workflows/Build-Push/badge.svg)](https://github.com/opspresso/builder/actions)
 [![GitHub Releases](https://img.shields.io/github/release/opspresso/builder.svg)](https://github.com/opspresso/builder/releases)
-[![CircleCI](https://circleci.com/gh/opspresso/builder.svg?style=svg)](https://circleci.com/gh/opspresso/builder)
 
 [![DockerHub Badge](http://dockeri.co/image/opspresso/builder)](https://hub.docker.com/r/opspresso/builder/)
 
