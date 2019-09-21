@@ -4,17 +4,10 @@ OS_NAME="$(uname | awk '{print tolower($0)}')"
 
 SHELL_DIR=$(dirname $0)
 
-CMD=${1:-$CIRCLE_JOB}
+REPOSITORY=${GITHUB_REPOSITORY}
 
-RUN_PATH=${2:-$SHELL_DIR}
-
-USERNAME=${CIRCLE_PROJECT_USERNAME:-opspresso}
-REPONAME=${CIRCLE_PROJECT_REPONAME:-builder}
-
-BRANCH=${CIRCLE_BRANCH:-master}
-
-GIT_USERNAME="bot"
-GIT_USEREMAIL="bot@nalbam.com"
+USERNAME=${GITHUB_ACTOR}
+REPONAME=$(echo "${REPOSITORY}" | cut -d'/' -f2)
 
 ################################################################################
 
@@ -61,12 +54,14 @@ _replace() {
 
 _prepare() {
     # target
-    mkdir -p ${RUN_PATH}/target/publish
-    mkdir -p ${RUN_PATH}/target/release
+    mkdir -p ${SHELL_DIR}/target/publish
+    mkdir -p ${SHELL_DIR}/target/release
 
     # 755
-    find ${RUN_PATH}/** | grep [.]sh | xargs chmod 755
+    find ${SHELL_DIR}/** | grep [.]sh | xargs chmod 755
 }
+
+################################################################################
 
 _package() {
     _check_version "argo" "argoproj/argo"
@@ -74,13 +69,10 @@ _package() {
     _check_version "kubectl" "kubernetes/kubernetes"
 
     if [ ! -z ${CHANGED} ]; then
+        _check_version "awscli" "aws/aws-cli"
+
         # _check_version "awsauth" "kubernetes-sigs/aws-iam-authenticator" "v"
-        # _check_version "awscli" "aws/aws-cli"
         # _check_version "hub" "github/hub" "v"
-
-        _git_push
-
-        echo "stop" > ${RUN_PATH}/target/circleci-stop
     fi
 }
 
@@ -89,27 +81,12 @@ _check_version() {
     REPO=${2}
     TRIM=${3}
 
-    NOW=$(cat ${RUN_PATH}/Dockerfile | grep "ENV ${NAME}" | awk '{print $3}' | xargs)
+    NOW=$(cat ${SHELL_DIR}/Dockerfile | grep "ENV ${NAME}" | awk '{print $3}' | xargs)
 
-    if [ "${NAME}" == "awscli" ]; then
-        pushd ${RUN_PATH}/target
-        curl -sLO https://s3.amazonaws.com/aws-cli/awscli-bundle.zip
-        unzip awscli-bundle.zip
-        popd
-
-        NEW=$(ls ${RUN_PATH}/target/awscli-bundle/packages/ | grep awscli | sed 's/awscli-//' | sed 's/.tar.gz//' | xargs)
-
-        rm -rf ${RUN_PATH}/target/awscli-*
-    else
-        NEW=$(curl -s https://api.github.com/repos/${REPO}/releases/latest | grep tag_name | cut -d'"' -f4 | xargs)
-    fi
+    NEW=$(curl -sL repo.opspresso.com/latest/${NAME} | xargs)
 
     if [ "${NEW}" == "" ]; then
         return
-    fi
-
-    if [ "${TRIM}" != "" ]; then
-        NEW=$(echo "${NEW}" | cut -d'v' -f2)
     fi
 
     _result "$(printf '%-25s %-25s %-25s' "${NAME}" "${NOW}" "${NEW}")"
@@ -117,58 +94,10 @@ _check_version() {
     if [ "${NEW}" != "${NOW}" ]; then
         CHANGED=true
 
-        printf "${NEW}" > ${RUN_PATH}/target/release/${NAME}
-
         # replace
-        _replace "s/ENV ${NAME} .*/ENV ${NAME} ${NEW}/g" ${RUN_PATH}/Dockerfile
-        _replace "s/ENV ${NAME} .*/ENV ${NAME} ${NEW}/g" ${RUN_PATH}/README.md
-
-        # slack
-        _slack "${NAME}" "${REPO}" "${NEW}"
+        _replace "s/ENV ${NAME} .*/ENV ${NAME} ${NEW}/g" ${SHELL_DIR}/Dockerfile
+        _replace "s/ENV ${NAME} .*/ENV ${NAME} ${NEW}/g" ${SHELL_DIR}/README.md
     fi
-}
-
-_slack() {
-    if [ -z ${SLACK_TOKEN} ]; then
-        return
-    fi
-
-    curl -sL opspresso.com/tools/slack | bash -s -- \
-        --token="${SLACK_TOKEN}" --username="${USERNAME}" \
-        --footer="<https://github.com/${2}/releases/tag/${3}|${2}>" \
-        --footer_icon="https://repo.opspresso.com/favicon/github.png" \
-        --color="good" --title="${1} updated" "\`${3}\`"
-}
-
-_git_push() {
-    if [ -z ${GITHUB_TOKEN} ]; then
-        return
-    fi
-    if [ "${BRANCH}" != "master" ]; then
-        return
-    fi
-
-    # commit message
-    LIST=/tmp/versions
-    ls ${RUN_PATH}/target/release > ${LIST}
-
-    echo "${REPONAME}" > ${RUN_PATH}/target/message
-
-    while read VAL; do
-        echo "${VAL} $(cat ${RUN_PATH}/target/release/${VAL} | xargs)" >> ${RUN_PATH}/target/message
-    done < ${LIST}
-
-    git config --global user.name "${GIT_USERNAME}"
-    git config --global user.email "${GIT_USEREMAIL}"
-
-    _command "git add --all"
-    git add --all
-
-    _command "git commit -m $(cat ${RUN_PATH}/target/message)"
-    git commit -m "$(cat ${RUN_PATH}/target/message)"
-
-    _command "git push github.com/${USERNAME}/${REPONAME} ${BRANCH}"
-    git push -q https://${GITHUB_TOKEN}@github.com/${USERNAME}/${REPONAME}.git ${BRANCH}
 }
 
 ################################################################################
