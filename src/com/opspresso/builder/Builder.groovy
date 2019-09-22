@@ -10,15 +10,24 @@ def debug() {
 
 def prepare(name = "sample", version = "") {
     // image name
-    this.name = name
-
     echo "# name: ${name}"
+    this.name = name
 
     set_version(version)
 
     this.cluster = ""
     this.namespace = ""
+
+    this.slack_token = ""
+    this.base_domain = ""
     this.sub_domain = ""
+
+    // this.jenkins = ""
+    // this.chartmuseum = ""
+    // this.registry = ""
+    // this.sonarqube = ""
+    // this.nexus = ""
+
     this.values_home = ""
 
     // this cluster
@@ -31,25 +40,22 @@ def set_version(version = "") {
         date = (new Date()).format('yyyyMMdd-HHmm')
         version = "v0.0.1-${date}"
     }
-
+    echo "# version: ${version}"
     this.version = version
-
-    echo "# version: ${version}"
 }
 
-def get_version() {
-    if (!version) {
-        throw new RuntimeException("No version")
-    }
-    echo "# version: ${version}"
-    this.version
-}
+// def get_version() {
+//     if (!version) {
+//         throw new RuntimeException("No version")
+//     }
+//     echo "# version: ${version}"
+//     this.version
+// }
 
-def set_values_home(values_home = "") {
-    this.values_home = values_home
-
-    echo "# values_home: ${values_home}"
-}
+// def set_values_home(values_home = "") {
+//     echo "# values_home: ${values_home}"
+//     this.values_home = values_home
+// }
 
 def scan(source_lang = "") {
     this.source_lang = source_lang
@@ -71,13 +77,20 @@ def scan(source_lang = "") {
 }
 
 def load_variables() {
+    path = "./Variables.groovy"
+
     // groovy variables
     sh """
-        kubectl get secret groovy-variables -n default -o json | jq -r .data.groovy | base64 -d > ${home}/Variables.groovy && \
-        cat ${home}/Variables.groovy | grep def
+        kubectl get secret groovy-variables -n default -o json | jq -r .data.groovy | base64 -d > ${path}
+        cat ${path} | grep def
     """
 
-    def val = load "${home}/Variables.groovy"
+    if (!fileExists("${path}")) {
+        echo "load_variables:no file ${path}"
+        throw new RuntimeException("no file ${path}")
+    }
+
+    def val = load "${path}"
 
     this.slack_token = val.slack_token
     this.base_domain = val.base_domain
@@ -111,8 +124,8 @@ def scan_langusge(target = "", target_lang = "") {
                     def mirror_xml = "<mirror><id>mirror</id><url>${mirror_url}</url><mirrorOf>${mirror_of}</mirrorOf></mirror>"
 
                     sh """
-                        mkdir -p ${m2_home} && \
-                        cp -f /root/.m2/settings.xml ${m2_home}/settings.xml && \
+                        mkdir -p ${m2_home}
+                        cp -f /root/.m2/settings.xml ${m2_home}/settings.xml
                         sed -i -e \"s|<!-- ### configured mirrors ### -->|${mirror_xml}|\" ${m2_home}/settings.xml
                     """
                 }
@@ -123,12 +136,13 @@ def scan_langusge(target = "", target_lang = "") {
 
 def env_cluster(cluster = "") {
     if (!cluster) {
-        // throw new RuntimeException("env_cluster:cluster is null.")
+        echo "env_cluster:cluster is null."
+        // throw new RuntimeException("cluster is null.")
         return
     }
 
     sh """
-        rm -rf ${home}/.aws && mkdir -p ${home}/.aws && \
+        rm -rf ${home}/.aws && mkdir -p ${home}/.aws
         rm -rf ${home}/.kube && mkdir -p ${home}/.kube
     """
 
@@ -144,7 +158,7 @@ def env_cluster(cluster = "") {
     sh """
         kubectl get secret kube-config-${cluster} -n devops -o json | jq -r .data.aws | base64 -d > ${home}/aws_config
         kubectl get secret kube-config-${cluster} -n devops -o json | jq -r .data.text | base64 -d > ${home}/kube_config
-        cp ${home}/aws_config ${home}/.aws/config && \
+        cp ${home}/aws_config ${home}/.aws/config
         cp ${home}/kube_config ${home}/.kube/config
     """
 
@@ -228,8 +242,8 @@ def make_chart(path = "", latest = false) {
 
     dir("${path}") {
         sh """
-            sed -i -e \"s/name: .*/name: ${name}/\" Chart.yaml && \
-            sed -i -e \"s/version: .*/version: ${version}/\" Chart.yaml && \
+            sed -i -e \"s/name: .*/name: ${name}/\" Chart.yaml
+            sed -i -e \"s/version: .*/version: ${version}/\" Chart.yaml
             sed -i -e \"s/tag: .*/tag: ${app_version}/g\" values.yaml
         """
 
@@ -258,7 +272,7 @@ def build_chart(path = "") {
     count = sh(script: "helm plugin list | grep 'Push chart package' | wc -l", returnStdout: true).trim()
     if ("${count}" == "0") {
         sh """
-            helm plugin install https://github.com/chartmuseum/helm-push && \
+            helm plugin install https://github.com/chartmuseum/helm-push
             helm plugin list
         """
     }
@@ -274,7 +288,7 @@ def build_chart(path = "") {
 
     // helm repo
     sh """
-        helm repo update && \
+        helm repo update
         helm search ${name}
     """
 }
@@ -295,7 +309,7 @@ def build_image() {
 
 def helm_init() {
     sh """
-        helm init --client-only && \
+        helm init --client-only
         helm version
     """
 
@@ -304,7 +318,7 @@ def helm_init() {
     }
 
     sh """
-        helm repo list && \
+        helm repo list
         helm repo update
     """
 }
@@ -320,7 +334,7 @@ def apply(cluster = "", namespace = "", type = "", yaml = "") {
     }
     if (!cluster) {
         echo "apply:cluster is null."
-        throw new RuntimeException("cluster is null.")
+        // throw new RuntimeException("cluster is null.")
     }
     if (!namespace) {
         echo "apply:namespace is null."
@@ -331,7 +345,11 @@ def apply(cluster = "", namespace = "", type = "", yaml = "") {
         type = "secret"
     }
     if (!yaml) {
-        yaml = "${type}/${cluster}/${namespace}/${name}.yaml"
+        if (!cluster) {
+            yaml = "${type}/${namespace}/${name}.yaml"
+        } else {
+            yaml = "${type}/${cluster}/${namespace}/${name}.yaml"
+        }
     }
 
     // yaml
@@ -356,32 +374,6 @@ def apply(cluster = "", namespace = "", type = "", yaml = "") {
     """
 }
 
-def deploy_only(deploy_name = "", version = "", cluster = "", namespace = "", sub_domain = "", profile = "", values_path = "") {
-
-    // env cluster
-    env_cluster(cluster)
-
-    // env namespace
-    env_namespace(namespace)
-
-    // helm init
-    helm_init()
-
-    sh """
-        helm upgrade --install ${deploy_name} chartmuseum/${name} \
-            --namespace ${namespace} --devel \
-            --values ${values_path} \
-            --set namespace=${namespace} \
-            --set ingress.basedomain=${base_domain} \
-            --set profile=${profile}
-    """
-
-    sh """
-        helm search ${name} && \
-        helm history ${name}-${namespace} --max 10
-    """
-}
-
 def deploy(cluster = "", namespace = "", sub_domain = "", profile = "", values_path = "") {
     if (!name) {
         echo "deploy:name is null."
@@ -393,7 +385,7 @@ def deploy(cluster = "", namespace = "", sub_domain = "", profile = "", values_p
     }
     if (!cluster) {
         echo "deploy:cluster is null."
-        throw new RuntimeException("cluster is null.")
+        // throw new RuntimeException("cluster is null.")
     }
     if (!namespace) {
         echo "deploy:namespace is null."
@@ -444,7 +436,7 @@ def deploy(cluster = "", namespace = "", sub_domain = "", profile = "", values_p
     }
 
     // Keep latest pod count
-    desired = sh(script: "kubectl get deploy -n ${namespace} | grep ${name} | head -1 | awk '{print \$2}'", returnStdout: true).trim()
+    desired = sh(script: "kubectl get deploy -n ${namespace} | grep ${name} | head -1 | awk '{print \$4}'", returnStdout: true).trim()
     if (desired != "") {
         extra_values = "--set replicaCount=${desired}"
     }
@@ -455,6 +447,7 @@ def deploy(cluster = "", namespace = "", sub_domain = "", profile = "", values_p
         if (values_home) {
             count = sh(script: "ls ${values_home}/${name} | grep '${namespace}.yaml' | wc -l", returnStdout: true).trim()
             if ("${count}" == "0") {
+                echo "deploy:values_path not found."
                 throw new RuntimeException("values_path not found.")
             } else {
                 values_path = "${values_home}/${name}/${namespace}.yaml"
@@ -499,7 +492,7 @@ def deploy(cluster = "", namespace = "", sub_domain = "", profile = "", values_p
     }
 
     sh """
-        helm search ${name} && \
+        helm search ${name}
         helm history ${name}-${namespace} --max 10
     """
 }
@@ -507,9 +500,10 @@ def deploy(cluster = "", namespace = "", sub_domain = "", profile = "", values_p
 def scan_helm(cluster = "", namespace = "") {
     // must have cluster
     if (!cluster) {
-        echo "remove:cluster is null."
-        throw new RuntimeException("cluster is null.")
+        echo "scan_helm:cluster is null."
+        // throw new RuntimeException("cluster is null.")
     }
+
     env_cluster(cluster)
 
     // admin can scan all images,
@@ -534,7 +528,7 @@ def scan_images_version(image_name = "", latest = false) {
     if (!chartmuseum) {
         load_variables()
     }
-    if(latest) {
+    if (latest) {
       list = sh(script: "curl -X GET https://${registry}/v2/${image_name}/tags/list | jq -r '.tags[]' | sort -r | head -n 1", returnStdout: true).trim()
     } else {
       list = sh(script: "curl -X GET https://${registry}/v2/${image_name}/tags/list | jq -r '.tags[]' | sort -r", returnStdout: true).trim()
@@ -564,15 +558,15 @@ def scan_charts_version(mychart = "", latest = false) {
 
 def rollback(cluster = "", namespace = "", revision = "") {
     if (!name) {
-        echo "remove:name is null."
+        echo "rollback:name is null."
         throw new RuntimeException("name is null.")
     }
     if (!cluster) {
-        echo "remove:cluster is null."
-        throw new RuntimeException("cluster is null.")
+        echo "rollback:cluster is null."
+        // throw new RuntimeException("cluster is null.")
     }
     if (!namespace) {
-        echo "remove:namespace is null."
+        echo "rollback:namespace is null."
         throw new RuntimeException("namespace is null.")
     }
     if (!revision) {
@@ -586,7 +580,7 @@ def rollback(cluster = "", namespace = "", revision = "") {
     helm_init()
 
     sh """
-        helm search ${name} && \
+        helm search ${name}
         helm history ${name}-${namespace} --max 10
     """
 
@@ -600,7 +594,7 @@ def remove(cluster = "", namespace = "") {
     }
     if (!cluster) {
         echo "remove:cluster is null."
-        throw new RuntimeException("cluster is null.")
+        // throw new RuntimeException("cluster is null.")
     }
     if (!namespace) {
         echo "remove:namespace is null."
@@ -614,7 +608,7 @@ def remove(cluster = "", namespace = "") {
     helm_init()
 
     sh """
-        helm search ${name} && \
+        helm search ${name}
         helm history ${name}-${namespace} --max 10
     """
 
@@ -713,19 +707,28 @@ def failure(token = "", type = "") {
 
 def success(token = "", type = "") {
     if (!name) {
-        echo "failure:name is null."
+        echo "success:name is null."
         throw new RuntimeException("name is null.")
     }
     if (!version) {
-        echo "failure:version is null."
+        echo "success:version is null."
         throw new RuntimeException("version is null.")
     }
-    if (cluster && sub_domain) {
-        def link = "https://${sub_domain}.${base_domain}"
-        slack(token, "good", "${type} Success", "`${name}` `${version}` :satellite: `${namespace}` :earth_asia: `${cluster}`", "${JOB_NAME} <${RUN_DISPLAY_URL}|#${BUILD_NUMBER}> : <${link}|${name}-${namespace}>")
+    def title = "${type} Success"
+    def message = ""
+    def footer = ""
+    if (sub_domain) {
+        if (cluster) {
+            message = "`${name}` `${version}` :satellite: `${namespace}` :earth_asia: `${cluster}`"
+        } else {
+            message = "`${name}` `${version}` :satellite: `${namespace}`"
+        }
+        footer = "${JOB_NAME} <${RUN_DISPLAY_URL}|#${BUILD_NUMBER}> : <https://${sub_domain}.${base_domain}|${name}-${namespace}>"
     } else {
-        slack(token, "good", "${type} Success", "`${name}` `${version}` :heavy_check_mark:", "${JOB_NAME} <${RUN_DISPLAY_URL}|#${BUILD_NUMBER}>")
+        message = "`${name}` `${version}` :heavy_check_mark:"
+        footer = "${JOB_NAME} <${RUN_DISPLAY_URL}|#${BUILD_NUMBER}>"
     }
+    slack(token, "good", title, message, "${JOB_NAME} <${RUN_DISPLAY_URL}|#${BUILD_NUMBER}>")
 }
 
 def proceed(token = "", type = "", namespace = "") {
