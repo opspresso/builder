@@ -2,7 +2,7 @@
 
 FROM docker
 
-RUN apk add -v --update bash curl python py-pip jq
+RUN apk add -v --update bash curl python py-pip jq git
 
 ENV kubectl v1.15.4
 ENV awscli 1.16.210
