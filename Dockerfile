@@ -2,7 +2,8 @@
 
 FROM docker
 
-RUN apk add -v --update bash curl python py-pip jq git
+RUN apk add -v --update bash curl python py-pip jq git && \
+    apk add --no-cache -X http://dl-cdn.alpinelinux.org/alpine/edge/testing hub
 
 ENV kubectl v1.15.4
 ENV awscli 1.16.210
