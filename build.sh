@@ -64,32 +64,26 @@ _prepare() {
 ################################################################################
 
 _package() {
-    _check_version "argo" "argoproj/argo"
-    _check_version "helm" "helm/helm"
-    _check_version "kubectl" "kubernetes/kubernetes"
+    _check_version "helm"
+    _check_version "kubectl"
 
-    if [ ! -z ${CHANGED} ]; then
-        _check_version "awscli" "aws/aws-cli"
-
-        # _check_version "awsauth" "kubernetes-sigs/aws-iam-authenticator" "v"
-        # _check_version "hub" "github/hub" "v"
+    if [ ! -z "${CHANGED}" ]; then
+        _check_version "awscli"
     fi
 }
 
 _check_version() {
     NAME=${1}
-    REPO=${2}
-    TRIM=${3}
 
     NOW=$(cat ${SHELL_DIR}/Dockerfile | grep "ENV ${NAME}" | awk '{print $3}' | xargs)
 
     NEW=$(curl -sL repo.opspresso.com/latest/${NAME} | xargs)
 
-    if [ "${NEW}" == "" ]; then
+    if [ -z "${NEW}" ]; then
         return
     fi
 
-    _result "$(printf '%-25s %-25s %-25s' "${NAME}" "${NOW}" "${NEW}")"
+    _result "$(printf '%-30s %-25s %-25s' "${NAME}" "${NOW}" "${NEW}")"
 
     if [ "${NEW}" != "${NOW}" ]; then
         CHANGED=true
