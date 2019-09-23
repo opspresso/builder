@@ -5,7 +5,7 @@ FROM docker
 RUN apk add -v --update bash curl python py-pip jq
 
 ENV kubectl v1.15.4
-ENV awscli 1.16.154
+ENV awscli 1.16.210
 ENV helm v2.14.3
 
 RUN pip install --upgrade awscli==${awscli} && \
