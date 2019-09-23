@@ -8,7 +8,7 @@ ENV kubectl v1.15.4
 ENV awscli 1.16.154
 ENV helm v2.14.3
 
-RUN pip3 install --upgrade awscli==${awscli} && \
+RUN pip install --upgrade awscli==${awscli} && \
     apk del -v --purge py-pip && \
     rm /var/cache/apk/*
 
