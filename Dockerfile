@@ -2,7 +2,7 @@
 
 FROM docker
 
-RUN apk add -v --update bash curl python py-pip groff less mailcap jq
+RUN apk add -v --update bash curl python py-pip groff less mailcap jq perl
 
 ENV kubectl v1.15.4
 ENV awscli 1.16.154
