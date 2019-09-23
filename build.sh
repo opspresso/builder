@@ -64,12 +64,7 @@ _prepare() {
 ################################################################################
 
 _package() {
-    _check_version "helm"
-    _check_version "kubectl"
-
-    if [ ! -z "${CHANGED}" ]; then
-        _check_version "awscli"
-    fi
+    _check_version "awscli"
 }
 
 _check_version() {
