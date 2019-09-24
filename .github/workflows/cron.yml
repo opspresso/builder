@@ -2,7 +2,7 @@ name: Build-Cron
 
 on:
   schedule:
-    - cron: "15 * * * *"
+    - cron: "10 * * * *"
 
 jobs:
   build:
@@ -23,3 +23,24 @@ jobs:
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
           MESSAGE_PATH: ./target/commit_message
+
+      - name: Bump Version
+        uses: opspresso/action-builder@master
+        with:
+          args: --version
+
+      - name: Release
+        uses: opspresso/action-builder@master
+        with:
+          args: --release
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+
+      - name: Docker Push
+        uses: opspresso/action-builder@master
+        with:
+          args: --docker
+        env:
+          USERNAME: ${{ secrets.DOCKER_USERNAME }}
+          PASSWORD: ${{ secrets.DOCKER_PASSWORD }}
+          LATEST: "true"
