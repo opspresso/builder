@@ -65,6 +65,10 @@ _prepare() {
 
 _package() {
     _check_version "awscli"
+
+    if [ -z "${CHANGED}" ]; then
+        _error
+    fi
 }
 
 _check_version() {
