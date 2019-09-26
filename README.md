@@ -12,5 +12,5 @@ docker pull opspresso/builder
 ## versions
 
 ```
-ENV awscli 1.16.246
+ENV awscli 1.16.247
 ```
