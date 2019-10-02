@@ -114,22 +114,23 @@ def scan_langusge(target = "", target_lang = "") {
             this.source_lang = target_lang
             this.source_root = target_root
 
-            // // maven mirror
-            // if (target_lang == "java") {
-            //     if (this.nexus) {
-            //         def m2_home = "/home/jenkins/.m2"
+            // maven mirror
+            if (target_lang == "java") {
+                if (this.nexus) {
+                    def m2_home = "/home/jenkins/.m2"
 
-            //         def mirror_of  = "*,!nexus-public,!nexus-releases,!nexus-snapshots"
-            //         def mirror_url = "https://${nexus}/repository/maven-public/"
-            //         def mirror_xml = "<mirror><id>mirror</id><url>${mirror_url}</url><mirrorOf>${mirror_of}</mirrorOf></mirror>"
+                    def mirror_of  = "*,!nexus-public,!nexus-releases,!nexus-snapshots"
+                    def mirror_url = "https://${nexus}/repository/maven-public/"
+                    def mirror_xml = "<mirror><id>mirror</id><url>${mirror_url}</url><mirrorOf>${mirror_of}</mirrorOf></mirror>"
 
-            //         sh """
-            //             mkdir -p ${m2_home}
-            //             cp -f /root/.m2/settings.xml ${m2_home}/settings.xml
-            //             sed -i -e \"s|<!-- ### configured mirrors ### -->|${mirror_xml}|\" ${m2_home}/settings.xml
-            //         """
-            //     }
-            // }
+                    sh """
+                        mkdir -p ${m2_home}
+                        cp -f /root/.m2/settings.xml ${m2_home}/settings.xml
+                        sed -i -e \"s|<!-- ### configured mirrors ### -->|${mirror_xml}|\" ${m2_home}/settings.xml
+                        ls -al ${m2_home}
+                    """
+                }
+            }
         }
     }
 }
