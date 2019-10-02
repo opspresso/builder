@@ -15,17 +15,17 @@ jobs:
         with:
           fetch-depth: 1
 
-      - name: Bump Version
-        uses: opspresso/action-builder@master
-        with:
-          args: --version
+      # - name: Bump Version
+      #   uses: opspresso/action-builder@master
+      #   with:
+      #     args: --version
 
-      - name: Release
-        uses: opspresso/action-builder@master
-        with:
-          args: --release
-        env:
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+      # - name: Release
+      #   uses: opspresso/action-builder@master
+      #   with:
+      #     args: --release
+      #   env:
+      #     GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
 
       - name: Docker Push
         uses: opspresso/action-builder@master
@@ -35,3 +35,23 @@ jobs:
           USERNAME: ${{ secrets.DOCKER_USERNAME }}
           PASSWORD: ${{ secrets.DOCKER_PASSWORD }}
           LATEST: "true"
+
+      - name: Docker Push - alpine
+        uses: opspresso/action-builder@master
+        with:
+          args: --docker
+        env:
+          USERNAME: ${{ secrets.DOCKER_USERNAME }}
+          PASSWORD: ${{ secrets.DOCKER_PASSWORD }}
+          BUILD_PATH: "./alpine"
+          VERSION: "alpine"
+
+      - name: Docker Push - kube
+        uses: opspresso/action-builder@master
+        with:
+          args: --docker
+        env:
+          USERNAME: ${{ secrets.DOCKER_USERNAME }}
+          PASSWORD: ${{ secrets.DOCKER_PASSWORD }}
+          BUILD_PATH: "./kube"
+          VERSION: "kube"

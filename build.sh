@@ -64,17 +64,20 @@ _prepare() {
 ################################################################################
 
 _package() {
-    _check_version "awscli"
+    _check_version "helm"
+    _check_version "kubectl"
 
     if [ -z "${CHANGED}" ]; then
         _error
     fi
+
+    _check_version "awscli"
 }
 
 _check_version() {
     NAME=${1}
 
-    NOW=$(cat ${SHELL_DIR}/Dockerfile | grep "ENV ${NAME}" | awk '{print $3}' | xargs)
+    NOW=$(cat ${SHELL_DIR}/README.md | grep "ENV ${NAME}" | awk '{print $3}' | xargs)
 
     NEW=$(curl -sL repo.opspresso.com/latest/${NAME} | xargs)
 
@@ -88,8 +91,10 @@ _check_version() {
         CHANGED=true
 
         # replace
-        _replace "s/ENV ${NAME} .*/ENV ${NAME} ${NEW}/g" ${SHELL_DIR}/Dockerfile
         _replace "s/ENV ${NAME} .*/ENV ${NAME} ${NEW}/g" ${SHELL_DIR}/README.md
+        _replace "s/ENV ${NAME} .*/ENV ${NAME} ${NEW}/g" ${SHELL_DIR}/Dockerfile
+        _replace "s/ENV ${NAME} .*/ENV ${NAME} ${NEW}/g" ${SHELL_DIR}/alpine/Dockerfile
+        _replace "s/ENV ${NAME} .*/ENV ${NAME} ${NEW}/g" ${SHELL_DIR}/kube/Dockerfile
     fi
 }
 
