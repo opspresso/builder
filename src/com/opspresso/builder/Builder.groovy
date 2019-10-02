@@ -628,10 +628,11 @@ def get_source_root(source_root = "") {
 }
 
 def get_m2_settings() {
-    settings = ""
-    // if (this.nexus) {
-    //     settings = "-s /home/jenkins/.m2/settings.xml"
-    // }
+    if (this.nexus) {
+        settings = "-s /home/jenkins/.m2/settings.xml"
+    else {
+        settings = ""
+    }
     return settings
 }
 
