@@ -117,18 +117,21 @@ def scan_langusge(target = "", target_lang = "") {
             // maven mirror
             if (target_lang == "java") {
                 if (this.nexus) {
-                    def m2_home = "/home/jenkins/.m2"
+                    def settings = "/root/.m2/settings.xml"
 
-                    def mirror_of  = "*,!nexus-public,!nexus-releases,!nexus-snapshots"
-                    def mirror_url = "https://${nexus}/repository/maven-public/"
-                    def mirror_xml = "<mirror><id>mirror</id><url>${mirror_url}</url><mirrorOf>${mirror_of}</mirrorOf></mirror>"
+                    if (fileExists("${settings}")) {
+                        def m2_home = "${home}/.m2"
 
-                    sh """
-                        mkdir -p ${m2_home}
-                        cp -f /root/.m2/settings.xml ${m2_home}/settings.xml
-                        sed -i -e \"s|<!-- ### configured mirrors ### -->|${mirror_xml}|\" ${m2_home}/settings.xml
-                        ls -al ${m2_home}
-                    """
+                        def mirror_of  = "*,!nexus-public,!nexus-releases,!nexus-snapshots"
+                        def mirror_url = "https://${nexus}/repository/maven-public/"
+                        def mirror_xml = "<mirror><id>mirror</id><url>${mirror_url}</url><mirrorOf>${mirror_of}</mirrorOf></mirror>"
+
+                        sh """
+                            mkdir -p ${m2_home}
+                            cp -f ${settings} ${m2_home}/settings.xml
+                            sed -i -e \"s|<!-- ### configured mirrors ### -->|${mirror_xml}|\" ${m2_home}/settings.xml
+                        """
+                    }
                 }
             }
         }
@@ -143,8 +146,8 @@ def env_cluster(cluster = "") {
     }
 
     sh """
-        rm -rf ${home}/.aws && mkdir -p ${home}/.aws
-        rm -rf ${home}/.kube && mkdir -p ${home}/.kube
+        mkdir -p ${home}/.aws  && rm -rf ${home}/.aws/*
+        mkdir -p ${home}/.kube && rm -rf ${home}/.kube/*
     """
 
     this.cluster = cluster
@@ -629,11 +632,12 @@ def get_source_root(source_root = "") {
 
 def get_m2_settings() {
     if (this.nexus) {
-        settings = "-s /home/jenkins/.m2/settings.xml"
-    } else {
-        settings = ""
+        settings = "/home/jenkins/.m2/settings.xml"
+        if (fileExists("${settings}")) {
+            return "-s ${settings}"
+        }
     }
-    return settings
+    return ""
 }
 
 def npm_build(source_root = "") {
@@ -653,9 +657,6 @@ def npm_test(source_root = "") {
 def mvn_build(source_root = "") {
     source_root = get_source_root(source_root)
     dir("${source_root}") {
-        sh """
-            ls -al /home/jenkins/
-        """
         settings = get_m2_settings()
         sh "mvn package ${settings} -DskipTests=true"
     }
