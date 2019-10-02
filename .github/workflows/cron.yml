@@ -55,7 +55,7 @@ jobs:
           USERNAME: ${{ secrets.DOCKER_USERNAME }}
           PASSWORD: ${{ secrets.DOCKER_PASSWORD }}
           BUILD_PATH: "./alpine"
-          VERSION: "alpine"
+          TAG_NAME: "alpine"
 
       - name: Docker Push - kube
         uses: opspresso/action-builder@master
@@ -65,4 +65,4 @@ jobs:
           USERNAME: ${{ secrets.DOCKER_USERNAME }}
           PASSWORD: ${{ secrets.DOCKER_PASSWORD }}
           BUILD_PATH: "./kube"
-          VERSION: "kube"
+          TAG_NAME: "kube"

@@ -15,17 +15,29 @@ jobs:
         with:
           fetch-depth: 1
 
+      # - name: Check Version
+      #   run: |
+      #     bash ./build.sh
+
+      # - name: Commit & Push
+      #   uses: opspresso/action-builder@master
+      #   with:
+      #     args: --commit
+      #   env:
+      #     GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+      #     MESSAGE_PATH: ./target/commit_message
+
       - name: Bump Version
         uses: opspresso/action-builder@master
         with:
           args: --version
 
-      # - name: Release
-      #   uses: opspresso/action-builder@master
-      #   with:
-      #     args: --release
-      #   env:
-      #     GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+      - name: Release
+        uses: opspresso/action-builder@master
+        with:
+          args: --release
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
 
       - name: Docker Push
         uses: opspresso/action-builder@master
