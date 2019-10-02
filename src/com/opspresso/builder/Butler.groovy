@@ -290,6 +290,10 @@ def build_chart(path = "") {
         if (chartmuseum) {
             sh "helm push . chartmuseum"
         }
+
+        if (harbor) {
+            sh "helm push . harbor"
+        }
     }
 
     // helm repo
