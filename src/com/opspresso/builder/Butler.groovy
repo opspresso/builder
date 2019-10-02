@@ -324,7 +324,7 @@ def helm_init() {
     }
 
     if (harbor) {
-        sh "helm repo add chartmuseum https://${harbor}/chartrepo/library"
+        sh "helm repo add harbor https://${harbor}/chartrepo/library"
     }
 
     sh """
