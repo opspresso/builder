@@ -11,7 +11,7 @@ RUN pip install --upgrade awscli==${awscli} && \
     apk del -v --purge py-pip && \
     rm /var/cache/apk/*
 
-COPY ../.m2/ /root/.m2/
+COPY .m2/ /root/.m2/
 
 VOLUME /root/.aws
 
