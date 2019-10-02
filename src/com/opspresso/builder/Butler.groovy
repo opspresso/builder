@@ -292,7 +292,7 @@ def build_chart(path = "") {
         }
 
         if (harbor) {
-            sh "helm push . harbor"
+            sh "helm push --username admin --password password . harbor"
         }
     }
 
