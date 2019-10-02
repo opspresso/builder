@@ -22,11 +22,12 @@ def prepare(name = "sample", version = "") {
     this.base_domain = ""
     this.sub_domain = ""
 
-    // this.jenkins = ""
     // this.chartmuseum = ""
+    // this.harbor = ""
+    // this.jenkins = ""
+    // this.nexus = ""
     // this.registry = ""
     // this.sonarqube = ""
-    // this.nexus = ""
 
     this.values_home = ""
 
@@ -96,11 +97,12 @@ def load_variables() {
     this.base_domain = val.base_domain
 
     if (val.cluster == "devops") {
-        this.jenkins = val.jenkins
         this.chartmuseum = val.chartmuseum
+        this.harbor = val.harbor
+        this.jenkins = val.jenkins
+        this.nexus = val.nexus
         this.registry = val.registry
         this.sonarqube = val.sonarqube
-        this.nexus = val.nexus
     }
 }
 
@@ -319,6 +321,10 @@ def helm_init() {
 
     if (chartmuseum) {
         sh "helm repo add chartmuseum https://${chartmuseum}"
+    }
+
+    if (harbor) {
+        sh "helm repo add chartmuseum https://${harbor}/public"
     }
 
     sh """
