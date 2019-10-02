@@ -653,6 +653,9 @@ def npm_test(source_root = "") {
 def mvn_build(source_root = "") {
     source_root = get_source_root(source_root)
     dir("${source_root}") {
+        sh """
+            ls -al /home/jenkins/
+        """
         settings = get_m2_settings()
         sh "mvn package ${settings} -DskipTests=true"
     }
