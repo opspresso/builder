@@ -22,11 +22,12 @@ def prepare(name = "sample", version = "") {
     this.base_domain = ""
     this.sub_domain = ""
 
-    // this.jenkins = ""
     // this.chartmuseum = ""
+    // this.harbor = ""
+    // this.jenkins = ""
+    // this.nexus = ""
     // this.registry = ""
     // this.sonarqube = ""
-    // this.nexus = ""
 
     this.values_home = ""
 
@@ -96,11 +97,12 @@ def load_variables() {
     this.base_domain = val.base_domain
 
     if (val.cluster == "devops") {
-        this.jenkins = val.jenkins
         this.chartmuseum = val.chartmuseum
+        this.harbor = val.harbor
+        this.jenkins = val.jenkins
+        this.nexus = val.nexus
         this.registry = val.registry
         this.sonarqube = val.sonarqube
-        this.nexus = val.nexus
     }
 }
 
@@ -117,17 +119,21 @@ def scan_langusge(target = "", target_lang = "") {
             // maven mirror
             if (target_lang == "java") {
                 if (this.nexus) {
-                    def m2_home = "/home/jenkins/.m2"
+                    def settings = "/root/.m2/settings.xml"
 
-                    def mirror_of  = "*,!nexus-public,!nexus-releases,!nexus-snapshots"
-                    def mirror_url = "https://${nexus}/repository/maven-public/"
-                    def mirror_xml = "<mirror><id>mirror</id><url>${mirror_url}</url><mirrorOf>${mirror_of}</mirrorOf></mirror>"
+                    if (fileExists("${settings}")) {
+                        def m2_home = "${home}/.m2"
 
-                    sh """
-                        mkdir -p ${m2_home}
-                        cp -f /root/.m2/settings.xml ${m2_home}/settings.xml
-                        sed -i -e \"s|<!-- ### configured mirrors ### -->|${mirror_xml}|\" ${m2_home}/settings.xml
-                    """
+                        def mirror_of  = "*,!nexus-public,!nexus-releases,!nexus-snapshots"
+                        def mirror_url = "https://${nexus}/repository/maven-public/"
+                        def mirror_xml = "<mirror><id>mirror</id><url>${mirror_url}</url><mirrorOf>${mirror_of}</mirrorOf></mirror>"
+
+                        sh """
+                            mkdir -p ${m2_home}
+                            cp -f ${settings} ${m2_home}/settings.xml
+                            sed -i -e \"s|<!-- ### configured mirrors ### -->|${mirror_xml}|\" ${m2_home}/settings.xml
+                        """
+                    }
                 }
             }
         }
@@ -142,8 +148,8 @@ def env_cluster(cluster = "") {
     }
 
     sh """
-        rm -rf ${home}/.aws && mkdir -p ${home}/.aws
-        rm -rf ${home}/.kube && mkdir -p ${home}/.kube
+        mkdir -p ${home}/.aws  && rm -rf ${home}/.aws/*
+        mkdir -p ${home}/.kube && rm -rf ${home}/.kube/*
     """
 
     this.cluster = cluster
@@ -284,6 +290,10 @@ def build_chart(path = "") {
         if (chartmuseum) {
             sh "helm push . chartmuseum"
         }
+
+        if (harbor) {
+            sh "helm push --username admin --password password . harbor"
+        }
     }
 
     // helm repo
@@ -315,6 +325,10 @@ def helm_init() {
 
     if (chartmuseum) {
         sh "helm repo add chartmuseum https://${chartmuseum}"
+    }
+
+    if (harbor) {
+        sh "helm repo add harbor https://${harbor}/chartrepo/library"
     }
 
     sh """
@@ -628,11 +642,12 @@ def get_source_root(source_root = "") {
 
 def get_m2_settings() {
     if (this.nexus) {
-        settings = "-s /home/jenkins/.m2/settings.xml"
-    } else {
-        settings = ""
+        settings = "/home/jenkins/.m2/settings.xml"
+        if (fileExists("${settings}")) {
+            return "-s ${settings}"
+        }
     }
-    return settings
+    return ""
 }
 
 def npm_build(source_root = "") {
