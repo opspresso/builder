@@ -82,7 +82,7 @@ def load_variables() {
 
     // groovy variables
     sh """
-        kubectl get secret groovy-variables -n default -o json | jq -r .data.groovy | base64 -d > ${path}
+        kubectl get secret groovy-variables -n default -o json | jq -r .data.groovy | base64 --decode > ${path}
         cat ${path} | grep def
     """
 
@@ -162,8 +162,8 @@ def env_cluster(cluster = "") {
     }
 
     sh """
-        kubectl get secret kube-config-${cluster} -n devops -o json | jq -r .data.aws | base64 -d > ${home}/aws_config
-        kubectl get secret kube-config-${cluster} -n devops -o json | jq -r .data.text | base64 -d > ${home}/kube_config
+        kubectl get secret kube-config-${cluster} -n devops -o json | jq -r .data.aws | base64 --decode > ${home}/aws_config
+        kubectl get secret kube-config-${cluster} -n devops -o json | jq -r .data.text | base64 --decode > ${home}/kube_config
         cp ${home}/aws_config ${home}/.aws/config
         cp ${home}/kube_config ${home}/.kube/config
     """
