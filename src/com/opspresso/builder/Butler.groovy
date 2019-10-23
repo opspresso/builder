@@ -82,7 +82,7 @@ def load_variables() {
 
     // groovy variables
     sh """
-        kubectl get secret groovy-variables -n default -o json | jq -r .data.groovy | base64 --decode > ${path}
+        kubectl get secret groovy-variables -n default -o json | jq -r .data.groovy | base64 -d > ${path}
         cat ${path} | grep def
     """
 
@@ -162,8 +162,8 @@ def env_cluster(cluster = "") {
     }
 
     sh """
-        kubectl get secret kube-config-${cluster} -n devops -o json | jq -r .data.aws | base64 --decode > ${home}/aws_config
-        kubectl get secret kube-config-${cluster} -n devops -o json | jq -r .data.text | base64 --decode > ${home}/kube_config
+        kubectl get secret kube-config-${cluster} -n devops -o json | jq -r .data.aws | base64 -d > ${home}/aws_config
+        kubectl get secret kube-config-${cluster} -n devops -o json | jq -r .data.text | base64 -d > ${home}/kube_config
         cp ${home}/aws_config ${home}/.aws/config
         cp ${home}/kube_config ${home}/.kube/config
     """
@@ -291,9 +291,9 @@ def build_chart(path = "") {
             sh "helm push . chartmuseum"
         }
 
-        if (harbor) {
-            sh "helm push --username admin --password password . harbor"
-        }
+        // if (harbor) {
+        //     sh "helm push --username admin --password password . harbor"
+        // }
     }
 
     // helm repo
@@ -327,9 +327,9 @@ def helm_init() {
         sh "helm repo add chartmuseum https://${chartmuseum}"
     }
 
-    if (harbor) {
-        sh "helm repo add harbor https://${harbor}/chartrepo/library"
-    }
+    // if (harbor) {
+    //     sh "helm repo add harbor https://${harbor}/chartrepo/library"
+    // }
 
     sh """
         helm repo list
