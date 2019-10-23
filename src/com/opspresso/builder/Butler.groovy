@@ -291,9 +291,9 @@ def build_chart(path = "") {
             sh "helm push . chartmuseum"
         }
 
-        if (harbor) {
-            sh "helm push --username admin --password password . harbor"
-        }
+        // if (harbor) {
+        //     sh "helm push --username admin --password password . harbor"
+        // }
     }
 
     // helm repo
@@ -327,9 +327,9 @@ def helm_init() {
         sh "helm repo add chartmuseum https://${chartmuseum}"
     }
 
-    if (harbor) {
-        sh "helm repo add harbor https://${harbor}/chartrepo/library"
-    }
+    // if (harbor) {
+    //     sh "helm repo add harbor https://${harbor}/chartrepo/library"
+    // }
 
     sh """
         helm repo list
