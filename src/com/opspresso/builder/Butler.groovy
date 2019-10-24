@@ -710,15 +710,6 @@ def failure(token = "", type = "") {
         echo "failure:name is null."
         throw new RuntimeException("name is null.")
     }
-    if (slack_token) {
-        if (!token) {
-            token = slack_token
-        } else if (token instanceof List) {
-            token.add(slack_token)
-        } else {
-            token = [token, slack_token]
-        }
-    }
     slack(token, "danger", "${type} Failure", "`${name}` `${version}`", "${JOB_NAME} <${RUN_DISPLAY_URL}|#${BUILD_NUMBER}>")
 }
 
@@ -762,6 +753,15 @@ def proceed(token = "", type = "", namespace = "") {
 
 def slack(token = "", color = "", title = "", message = "", footer = "") {
     try {
+        if (slack_token) {
+            if (!token) {
+                token = slack_token
+            } else if (token instanceof List) {
+                token.add(slack_token)
+            } else {
+                token = [token, slack_token]
+            }
+        }
         if (token) {
             if (token instanceof List) {
                 for (item in token) {
