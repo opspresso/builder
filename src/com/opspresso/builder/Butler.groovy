@@ -164,8 +164,8 @@ def env_cluster(cluster = "") {
     sh """
         kubectl get secret kube-config-${cluster} -n devops -o json | jq -r .data.aws | base64 -d > ${home}/aws_config
         kubectl get secret kube-config-${cluster} -n devops -o json | jq -r .data.text | base64 -d > ${home}/kube_config
-        cp ${home}/aws_config ${home}/.aws/config
-        cp ${home}/kube_config ${home}/.kube/config
+        cp ${home}/aws_config ${home}/.aws/config && ls -al ${home}/.aws
+        cp ${home}/kube_config ${home}/.kube/config && ls -al ${home}/.kube
     """
 
     // check current context
