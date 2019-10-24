@@ -453,7 +453,7 @@ def deploy(cluster = "", namespace = "", sub_domain = "", profile = "", values_p
 
     // Keep latest pod count
     desired = sh(script: "kubectl get deploy -n ${namespace} | grep ${name} | head -1 | awk '{print \$4}'", returnStdout: true).trim()
-    if (desired != "") {
+    if (desired != "" && desired != "0") {
         extra_values = "--set replicaCount=${desired}"
     }
 
