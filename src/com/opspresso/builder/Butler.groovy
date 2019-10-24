@@ -112,12 +112,14 @@ def scan_langusge(target = "", target_lang = "") {
     if (target_path) {
         def target_root = sh(script: "dirname ${target_path}", returnStdout: true).trim()
 
+        echo "target_root: ${target_root}"
+
         if (target_root) {
             this.source_lang = target_lang
             this.source_root = target_root
 
             // maven mirror
-            if ("${target_lang}" == "java") {
+            if (target_lang == "java") {
                 if (this.nexus) {
                     def settings = "/root/.m2/settings.xml"
 
