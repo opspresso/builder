@@ -122,6 +122,7 @@ def scan_langusge(target = "", target_lang = "") {
                     def settings = "/root/.m2/settings.xml"
 
                     sh """
+                        ls -al /root/.m2/
                         cat ${settings}
                     """
 
