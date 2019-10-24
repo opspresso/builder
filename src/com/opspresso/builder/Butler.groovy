@@ -147,12 +147,16 @@ def env_cluster(cluster = "") {
         return
     }
 
+    if (cluster == "local") {
+        return
+    }
+
+    this.cluster = cluster
+
     sh """
         mkdir -p ${home}/.aws  && rm -rf ${home}/.aws/*
         mkdir -p ${home}/.kube && rm -rf ${home}/.kube/*
     """
-
-    this.cluster = cluster
 
     // check cluster secret
     count = sh(script: "kubectl get secret -n devops | grep 'kube-config-${cluster}' | wc -l", returnStdout: true).trim()
@@ -164,8 +168,6 @@ def env_cluster(cluster = "") {
     sh """
         kubectl get secret kube-config-${cluster} -n devops -o json | jq -r .data.aws | base64 -d > ${home}/.aws/config
         kubectl get secret kube-config-${cluster} -n devops -o json | jq -r .data.text | base64 -d > ${home}/.kube/config
-        ls -al ${home}/.aws
-        ls -al ${home}/.kube
     """
 
     // check current context
