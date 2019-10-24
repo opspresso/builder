@@ -22,12 +22,12 @@ def prepare(name = "sample", version = "") {
     this.base_domain = ""
     this.sub_domain = ""
 
-    // this.chartmuseum = ""
-    // this.harbor = ""
-    // this.jenkins = ""
-    // this.nexus = ""
-    // this.registry = ""
-    // this.sonarqube = ""
+    this.chartmuseum = ""
+    this.harbor = ""
+    this.jenkins = ""
+    this.nexus = ""
+    this.registry = ""
+    this.sonarqube = ""
 
     this.values_home = ""
 
@@ -120,11 +120,6 @@ def scan_langusge(target = "", target_lang = "") {
             if (target_lang == "java") {
                 if (this.nexus) {
                     def settings = "/root/.m2/settings.xml"
-
-                    sh """
-                        ls -al /root/.m2/
-                        cat ${settings}
-                    """
 
                     if (fileExists("${settings}")) {
                         def m2_home = "${home}/.m2"
