@@ -117,7 +117,7 @@ def scan_langusge(target = "", target_lang = "") {
             this.source_root = target_root
 
             // maven mirror
-            if (target_lang == "java") {
+            if ("${target_lang}" == "java") {
                 if (this.nexus) {
                     def settings = "/root/.m2/settings.xml"
 
