@@ -1,5 +1,5 @@
 #!/usr/bin/groovy
-package com.opspresso.builder;
+package com.opspresso;
 
 def debug() {
     sh """
