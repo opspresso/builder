@@ -38,25 +38,19 @@ def prepare(name = "sample", version = "") {
 def set_version(version = "") {
     // version
     if (!version) {
-        date = (new Date()).format('yyyyMMdd-HHmm')
-        version = "v0.0.1-${date}"
+        def dt = (new Date()).format('yyyyMMdd-HHmm')
+
+        if (fileExists("./VERSION")) {
+            def ver = sh(script: "cat ./VERSION", returnStdout: true).trim()
+
+            version = "${ver}-${dt}"
+        } else {
+            version = "v0.1.0-${dt}"
+        }
     }
     echo "# version: ${version}"
     this.version = version
 }
-
-// def get_version() {
-//     if (!version) {
-//         throw new RuntimeException("No version")
-//     }
-//     echo "# version: ${version}"
-//     this.version
-// }
-
-// def set_values_home(values_home = "") {
-//     echo "# values_home: ${values_home}"
-//     this.values_home = values_home
-// }
 
 def scan(source_lang = "") {
     this.source_lang = source_lang
