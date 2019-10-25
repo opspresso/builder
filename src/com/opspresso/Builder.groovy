@@ -18,7 +18,8 @@ def prepare(name = "sample") {
 
     // this.slack_token = ""
     // this.base_domain = ""
-    // this.sub_domain = ""
+
+    this.sub_domain = ""
 
     // this.chartmuseum = ""
     // this.harbor = ""
