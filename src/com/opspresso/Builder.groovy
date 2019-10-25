@@ -119,20 +119,23 @@ def scan_langusge(target = "", target_lang = "") {
     }
 }
 
-def set_version(version = "") {
+def set_version(appVersion = "", version = "") {
     // version
-    if (!version) {
-        def dt = (new Date()).format('yyyyMMdd-HHmm')
-
+    if (!appVersion) {
         if (fileExists("./VERSION")) {
-            def ver = sh(script: "cat ./VERSION | sed 's/x/0/'", returnStdout: true).trim()
-
-            version = "${ver}-${dt}"
+            appVersion = sh(script: "cat ./VERSION | sed 's/x/0/'", returnStdout: true).trim()
         } else {
-            version = "v0.1.0-${dt}"
+            appVersion = "v0.0.0"
         }
     }
+
+    def dt = (new Date()).format('yyyyMMdd-HHmm')
+
+    version = "${appVersion}-${dt}"
+
     echo "# version: ${version}"
+
+    this.appVersion = appVersion
     this.version = version
 }
 
@@ -222,18 +225,16 @@ def make_chart(path = "", latest = false) {
         echo "make_chart:name is null."
         throw new RuntimeException("name is null.")
     }
-    if (latest) {
-        echo "latest version scan"
-        app_version = scan_images_version(name, true)
-    } else {
-        app_version = version
-    }
     if (!version) {
         echo "make_chart:version is null."
         throw new RuntimeException("version is null.")
     }
     if (!path) {
         path = "charts/${name}"
+    }
+    if (latest) {
+        echo "latest version scan"
+        version = scan_images_version(name, true)
     }
 
     if (!fileExists("${path}")) {
@@ -244,8 +245,9 @@ def make_chart(path = "", latest = false) {
     dir("${path}") {
         sh """
             sed -i -e \"s/name: .*/name: ${name}/\" Chart.yaml
+            sed -i -e \"s/appVersion: .*/appVersion: ${appVersion}/\" Chart.yaml
             sed -i -e \"s/version: .*/version: ${version}/\" Chart.yaml
-            sed -i -e \"s/tag: .*/tag: ${app_version}/g\" values.yaml
+            sed -i -e \"s/tag: .*/tag: ${version}/g\" values.yaml
         """
 
         if (registry) {
