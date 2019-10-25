@@ -125,7 +125,7 @@ def set_version(version = "") {
         def dt = (new Date()).format('yyyyMMdd-HHmm')
 
         if (fileExists("./VERSION")) {
-            def ver = sh(script: "cat ./VERSION", returnStdout: true).trim()
+            def ver = sh(script: "cat ./VERSION | sed 's/x/0/'", returnStdout: true).trim()
 
             version = "${ver}-${dt}"
         } else {
