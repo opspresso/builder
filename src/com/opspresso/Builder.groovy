@@ -157,14 +157,8 @@ def env_cluster(cluster = "") {
     }
 
     sh """
-        rm -rf ${home}/.aws ${home}/.kube
-        mkdir -p ${home}/.aws ${home}/.kube /root/.aws /root/.kube
-        kubectl get secret kube-config-${cluster} -n devops -o json | jq -r .data.aws | base64 -d > ${home}/aws_config
-        kubectl get secret kube-config-${cluster} -n devops -o json | jq -r .data.text | base64 -d > ${home}/kube_config
-        cp ${home}/aws_config ${home}/.aws/config
-        cp ${home}/kube_config ${home}/.kube/config
-        cp ${home}/aws_config /root/.aws/config
-        cp ${home}/kube_config /root/.kube/config
+        mkdir -p /root/.kube
+        kubectl get secret kube-config-${cluster} -n devops -o json | jq -r .data.text | base64 -d > /root/.kube/config
     """
 
     sh "kubectl config current-context"
