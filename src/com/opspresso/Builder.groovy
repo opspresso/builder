@@ -149,11 +149,6 @@ def env_cluster(cluster = "") {
 
     this.cluster = cluster
 
-    sh """
-        mkdir -p ${home}/.aws  && rm -rf ${home}/.aws/*
-        mkdir -p ${home}/.kube && rm -rf ${home}/.kube/*
-    """
-
     // check cluster secret
     count = sh(script: "kubectl get secret -n devops | grep 'kube-config-${cluster}' | wc -l", returnStdout: true).trim()
     if ("${count}" == "0") {
@@ -162,8 +157,15 @@ def env_cluster(cluster = "") {
     }
 
     sh """
-        kubectl get secret kube-config-${cluster} -n devops -o json | jq -r .data.aws | base64 -d > ${home}/.aws/config
-        kubectl get secret kube-config-${cluster} -n devops -o json | jq -r .data.text | base64 -d > ${home}/.kube/config
+        rm -rf ${home}/.aws ${home}/.kube
+        mkdir -p ${home}/.aws ${home}/.kube
+    """
+
+    sh """
+        kubectl get secret kube-config-${cluster} -n devops -o json | jq -r .data.aws | base64 -d > ${home}/aws_config
+        kubectl get secret kube-config-${cluster} -n devops -o json | jq -r .data.text | base64 -d > ${home}/kube_config
+        cp ${home}/aws_config ${home}/.aws/config
+        cp ${home}/kube_config ${home}/.kube/config
     """
 
     sh "kubectl config current-context"
@@ -189,7 +191,7 @@ def env_namespace(namespace = "") {
 
     // check namespace
     count = sh(script: "kubectl get ns ${namespace} 2>&1 | grep Active | grep ${namespace} | wc -l", returnStdout: true).trim()
-    if ("$count" == "0") {
+    if ("${count}" == "0") {
         sh "kubectl create namespace ${namespace}"
     }
 }
@@ -210,7 +212,7 @@ def env_config(type = "", name = "", namespace = "") {
 
     // check config
     count = sh(script: "kubectl get ${type} -n ${namespace} | grep ${name} | wc -l", returnStdout: true).trim()
-    if ("$count" == "0") {
+    if ("${count}" == "0") {
         return "false"
     }
 
