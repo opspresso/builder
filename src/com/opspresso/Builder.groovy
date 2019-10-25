@@ -13,8 +13,8 @@ def prepare(name = "sample") {
     echo "# name: ${name}"
     this.name = name
 
-    // this.cluster = ""
-    // this.namespace = ""
+    this.cluster = ""
+    this.namespace = ""
 
     // this.slack_token = ""
     // this.base_domain = ""
@@ -491,7 +491,6 @@ def deploy(cluster = "", namespace = "", sub_domain = "", profile = "", values_p
             helm upgrade --install ${name}-${namespace} chartmuseum/${name} \
                 --version ${version} \
                 --namespace ${namespace} --devel \
-                --set fullnameOverride=${name} \
                 --set ingress.subdomain=${sub_domain} \
                 --set ingress.basedomain=${base_domain} \
                 --set namespace=${namespace} \
