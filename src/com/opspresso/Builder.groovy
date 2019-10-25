@@ -13,8 +13,6 @@ def prepare(name = "sample", version = "") {
     echo "# name: ${name}"
     this.name = name
 
-    set_version(version)
-
     this.cluster = ""
     this.namespace = ""
 
@@ -31,25 +29,8 @@ def prepare(name = "sample", version = "") {
 
     this.values_home = ""
 
-    // this cluster
+    // variables
     load_variables()
-}
-
-def set_version(version = "") {
-    // version
-    if (!version) {
-        def dt = (new Date()).format('yyyyMMdd-HHmm')
-
-        if (fileExists("./VERSION")) {
-            def ver = sh(script: "cat ./VERSION", returnStdout: true).trim()
-
-            version = "${ver}-${dt}"
-        } else {
-            version = "v0.1.0-${dt}"
-        }
-    }
-    echo "# version: ${version}"
-    this.version = version
 }
 
 def scan(source_lang = "") {
@@ -66,6 +47,9 @@ def scan(source_lang = "") {
 
     echo "# source_lang: ${this.source_lang}"
     echo "# source_root: ${this.source_root}"
+
+    // version
+    set_version(version)
 
     // chart
     make_chart()
@@ -132,6 +116,23 @@ def scan_langusge(target = "", target_lang = "") {
             }
         }
     }
+}
+
+def set_version(version = "") {
+    // version
+    if (!version) {
+        def dt = (new Date()).format('yyyyMMdd-HHmm')
+
+        if (fileExists("./VERSION")) {
+            def ver = sh(script: "cat ./VERSION", returnStdout: true).trim()
+
+            version = "${ver}-${dt}"
+        } else {
+            version = "v0.1.0-${dt}"
+        }
+    }
+    echo "# version: ${version}"
+    this.version = version
 }
 
 def env_cluster(cluster = "") {
@@ -231,7 +232,6 @@ def make_chart(path = "", latest = false) {
     if (!version) {
         echo "make_chart:version is null."
         throw new RuntimeException("version is null.")
-
     }
     if (!path) {
         path = "charts/${name}"
@@ -472,13 +472,13 @@ def deploy(cluster = "", namespace = "", sub_domain = "", profile = "", values_p
         // helm install
         sh """
             helm upgrade --install ${name}-${namespace} chartmuseum/${name} \
-                --version ${version} --namespace ${namespace} --devel \
+                --app-version ${version} --version ${version} \
+                --namespace ${namespace} --devel \
                 --values ${values_path} \
                 --set namespace=${namespace} \
                 --set profile=${profile} \
                 ${extra_values}
         """
-        // --app-version ${version} \
         // --set configmap.enabled=${configmap} \
         // --set secret.enabled=${secret} \
 
@@ -487,7 +487,8 @@ def deploy(cluster = "", namespace = "", sub_domain = "", profile = "", values_p
         // helm install
         sh """
             helm upgrade --install ${name}-${namespace} chartmuseum/${name} \
-                --version ${version} --namespace ${namespace} --devel \
+                --app-version ${version} --version ${version} \
+                --namespace ${namespace} --devel \
                 --set fullnameOverride=${name} \
                 --set ingress.subdomain=${sub_domain} \
                 --set ingress.basedomain=${base_domain} \
@@ -495,7 +496,6 @@ def deploy(cluster = "", namespace = "", sub_domain = "", profile = "", values_p
                 --set profile=${profile} \
                 ${extra_values}
         """
-        // --app-version ${version} \
         // --set configmap.enabled=${configmap} \
         // --set secret.enabled=${secret} \
 
