@@ -166,6 +166,8 @@ def env_cluster(cluster = "") {
         kubectl get secret kube-config-${cluster} -n devops -o json | jq -r .data.text | base64 -d > ${home}/.kube/config
     """
 
+    sh "kubectl config current-context"
+
     // check current context
     count = sh(script: "kubectl config current-context | grep '${cluster}' | wc -l", returnStdout: true).trim()
     if ("${count}" == "0") {
