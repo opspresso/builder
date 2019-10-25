@@ -57,7 +57,7 @@ def scan(source_lang = "") {
 }
 
 def load_variables() {
-    path = "./Variables.groovy"
+    def path = "./Variables.groovy"
 
     // groovy variables
     sh """
@@ -467,13 +467,14 @@ def deploy(cluster = "", namespace = "", sub_domain = "", profile = "", values_p
     // }
 
     // app-version: https://github.com/helm/helm/pull/5492
+    // --app-version ${version}
 
     if (values_path) {
 
         // helm install
         sh """
             helm upgrade --install ${name}-${namespace} chartmuseum/${name} \
-                --app-version ${version} --version ${version} \
+                --version ${version} \
                 --namespace ${namespace} --devel \
                 --values ${values_path} \
                 --set namespace=${namespace} \
@@ -488,7 +489,7 @@ def deploy(cluster = "", namespace = "", sub_domain = "", profile = "", values_p
         // helm install
         sh """
             helm upgrade --install ${name}-${namespace} chartmuseum/${name} \
-                --app-version ${version} --version ${version} \
+                --version ${version} \
                 --namespace ${namespace} --devel \
                 --set fullnameOverride=${name} \
                 --set ingress.subdomain=${sub_domain} \
