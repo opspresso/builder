@@ -157,7 +157,8 @@ def env_cluster(cluster = "") {
     }
 
     sh """
-        mkdir -p /root/.kube
+        mkdir -p /root/.aws /root/.kube
+        kubectl get secret kube-config-${cluster} -n devops -o json | jq -r .data.aws | base64 -d > /root/.aws/config
         kubectl get secret kube-config-${cluster} -n devops -o json | jq -r .data.text | base64 -d > /root/.kube/config
     """
 
