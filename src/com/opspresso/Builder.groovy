@@ -504,6 +504,12 @@ def deploy(cluster = "", namespace = "", sub_domain = "", profile = "", values_p
         helm search ${name}
         helm history ${name}-${namespace} --max 10
     """
+
+    // print ingress host
+    host = sh(script: "kubectl get ing -n ${namespace} | grep ${name} | head -1 | awk '{print \$1}'", returnStdout: true).trim()
+    if (host != "") {
+        echo "http://${host}"
+    }
 }
 
 def scan_helm(cluster = "", namespace = "") {
