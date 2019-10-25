@@ -452,19 +452,19 @@ def deploy(cluster = "", namespace = "", sub_domain = "", profile = "", values_p
         extra_values = "--set replicaCount=${desired}"
     }
 
-    // values_path
-    if (!values_path) {
-        values_path = ""
-        if (values_home) {
-            count = sh(script: "ls ${values_home}/${name} | grep '${namespace}.yaml' | wc -l", returnStdout: true).trim()
-            if ("${count}" == "0") {
-                echo "deploy:values_path not found."
-                throw new RuntimeException("values_path not found.")
-            } else {
-                values_path = "${values_home}/${name}/${namespace}.yaml"
-            }
-        }
-    }
+    // // values_path
+    // if (!values_path) {
+    //     values_path = ""
+    //     if (values_home) {
+    //         count = sh(script: "ls ${values_home}/${name} | grep '${namespace}.yaml' | wc -l", returnStdout: true).trim()
+    //         if ("${count}" == "0") {
+    //             echo "deploy:values_path not found."
+    //             throw new RuntimeException("values_path not found.")
+    //         } else {
+    //             values_path = "${values_home}/${name}/${namespace}.yaml"
+    //         }
+    //     }
+    // }
 
     // app-version: https://github.com/helm/helm/pull/5492
 
