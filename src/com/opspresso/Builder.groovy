@@ -8,26 +8,26 @@ def debug() {
     """
 }
 
-def prepare(name = "sample", version = "") {
+def prepare(name = "sample") {
     // image name
     echo "# name: ${name}"
     this.name = name
 
-    this.cluster = ""
-    this.namespace = ""
+    // this.cluster = ""
+    // this.namespace = ""
 
-    this.slack_token = ""
-    this.base_domain = ""
-    this.sub_domain = ""
+    // this.slack_token = ""
+    // this.base_domain = ""
+    // this.sub_domain = ""
 
-    this.chartmuseum = ""
-    this.harbor = ""
-    this.jenkins = ""
-    this.nexus = ""
-    this.registry = ""
-    this.sonarqube = ""
+    // this.chartmuseum = ""
+    // this.harbor = ""
+    // this.jenkins = ""
+    // this.nexus = ""
+    // this.registry = ""
+    // this.sonarqube = ""
 
-    this.values_home = ""
+    // this.values_home = ""
 
     // variables
     load_variables()
@@ -49,7 +49,7 @@ def scan(source_lang = "") {
     echo "# source_root: ${this.source_root}"
 
     // version
-    set_version(version)
+    set_version()
 
     // chart
     make_chart()
