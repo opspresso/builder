@@ -506,7 +506,7 @@ def deploy(cluster = "", namespace = "", sub_domain = "", profile = "", values_p
     """
 
     // print ingress host
-    host = sh(script: "kubectl get ing -n ${namespace} | grep ${name} | head -1 | awk '{print \$1}'", returnStdout: true).trim()
+    host = sh(script: "kubectl get ing -n ${namespace} | grep ${name} | head -1 | awk '{print \$2}'", returnStdout: true).trim()
     if (host != "") {
         echo "http://${host}"
     }
