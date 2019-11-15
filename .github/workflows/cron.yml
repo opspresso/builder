@@ -1,13 +1,8 @@
-name: Build-Push
-
-# on:
-#   schedule:
-#     - cron: "10 * * * *"
+name: Build-Cron
 
 on:
-  push:
-    branches:
-      - master
+  schedule:
+    - cron: "10 * * * *"
 
 jobs:
   build:
