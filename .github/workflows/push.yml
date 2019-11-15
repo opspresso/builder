@@ -1,8 +1,13 @@
-name: Build-Cron
+name: Build-Push
+
+# on:
+#   schedule:
+#     - cron: "10 * * * *"
 
 on:
-  schedule:
-    - cron: "10 * * * *"
+  push:
+    branches:
+      - master
 
 jobs:
   build:
@@ -11,9 +16,9 @@ jobs:
     steps:
       - name: Checkout
         uses: actions/checkout@v1
+
         # with:
         #   fetch-depth: 1
-
       - name: Check Version
         run: |
           bash ./build.sh
