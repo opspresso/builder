@@ -68,7 +68,7 @@ _package() {
     _check_version "kubectl"
 
     if [ -z "${CHANGED}" ]; then
-        _error
+        _success "Not changed"
     fi
 
     _check_version "awscli"
