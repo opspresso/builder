@@ -68,7 +68,7 @@ _package() {
     _check_version "kubectl"
 
     if [ -z "${CHANGED}" ]; then
-        _success "Not changed"
+        _error "Not changed"
     fi
 
     _check_version "awscli"
@@ -87,7 +87,7 @@ _check_version() {
 
     _result "$(printf '%-30s %-25s %-25s' "${NAME}" "${NOW}" "${NEW}")"
 
-    if [ "${NEW}" != "${NOW}" ]; then
+    if [ "${NOW}" != "${NEW}" ]; then
         CHANGED=true
 
         # replace
