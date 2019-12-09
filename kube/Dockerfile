@@ -17,7 +17,7 @@ RUN curl -sLo /usr/local/bin/kubectl https://storage.googleapis.com/kubernetes-r
     chmod +x /usr/local/bin/kubectl
 
 # helm
-ENV helm v2.6.1
+ENV helm v3.0.1
 RUN curl -sL https://get.helm.sh/helm-${helm}-linux-amd64.tar.gz | tar xz && \
     mv linux-amd64/helm /usr/local/bin/helm && \
     chmod +x /usr/local/bin/helm
