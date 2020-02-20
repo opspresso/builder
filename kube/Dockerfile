@@ -6,7 +6,7 @@ RUN apk add -v --update bash curl python py-pip jq git file tar && \
     apk add --no-cache -X http://dl-cdn.alpinelinux.org/alpine/edge/testing hub
 
 # awscli
-ENV awscli 1.17.16
+ENV awscli 1.18.3
 RUN pip install --upgrade awscli==${awscli} && \
     apk del -v --purge py-pip && \
     rm /var/cache/apk/*
@@ -17,7 +17,7 @@ RUN curl -sLo /usr/local/bin/kubectl https://storage.googleapis.com/kubernetes-r
     chmod +x /usr/local/bin/kubectl
 
 # helm
-ENV helm v3.1.0
+ENV helm v3.1.1
 RUN curl -sL https://get.helm.sh/helm-${helm}-linux-amd64.tar.gz | tar xz && \
     mv linux-amd64/helm /usr/local/bin/helm && \
     chmod +x /usr/local/bin/helm
