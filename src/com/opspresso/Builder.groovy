@@ -16,17 +16,16 @@ def prepare(name = "sample") {
     this.cluster = ""
     this.namespace = ""
 
-    // this.slack_token = ""
-    // this.base_domain = ""
-
+    this.slack_token = ""
+    this.base_domain = ""
     this.sub_domain = ""
 
-    // this.chartmuseum = ""
-    // this.harbor = ""
-    // this.jenkins = ""
-    // this.nexus = ""
-    // this.registry = ""
-    // this.sonarqube = ""
+    this.chartmuseum = ""
+    this.harbor = ""
+    this.jenkins = ""
+    this.nexus = ""
+    this.registry = ""
+    this.sonarqube = ""
 
     // this.values_home = ""
 
