@@ -30,8 +30,8 @@ def prepare(name = "sample") {
 
     // this.values_home = ""
 
-    // local cluster
-    load_variables()
+    // // local cluster
+    // load_variables()
 }
 
 def scan(source_lang = "") {
@@ -56,34 +56,34 @@ def scan(source_lang = "") {
     make_chart()
 }
 
-def load_variables() {
-    def path = "./Variables.groovy"
+// def load_variables() {
+//     def path = "./Variables.groovy"
 
-    // groovy variables
-    sh """
-        kubectl get secret groovy-variables -n default -o json | jq -r .data.groovy | base64 -d > ${path}
-        cat ${path} | grep def
-    """
+//     // groovy variables
+//     sh """
+//         kubectl get secret groovy-variables -n default -o json | jq -r .data.groovy | base64 -d > ${path}
+//         cat ${path} | grep def
+//     """
 
-    if (!fileExists("${path}")) {
-        echo "load_variables:no file ${path}"
-        throw new RuntimeException("no file ${path}")
-    }
+//     if (!fileExists("${path}")) {
+//         echo "load_variables:no file ${path}"
+//         throw new RuntimeException("no file ${path}")
+//     }
 
-    def val = load "${path}"
+//     def val = load "${path}"
 
-    this.slack_token = val.slack_token
-    this.base_domain = val.base_domain
+//     this.slack_token = val.slack_token
+//     this.base_domain = val.base_domain
 
-    if (val.cluster == "devops") {
-        this.chartmuseum = val.chartmuseum
-        this.harbor = val.harbor
-        this.jenkins = val.jenkins
-        this.nexus = val.nexus
-        this.registry = val.registry
-        this.sonarqube = val.sonarqube
-    }
-}
+//     if (val.cluster == "devops") {
+//         this.chartmuseum = val.chartmuseum
+//         this.harbor = val.harbor
+//         this.jenkins = val.jenkins
+//         this.nexus = val.nexus
+//         this.registry = val.registry
+//         this.sonarqube = val.sonarqube
+//     }
+// }
 
 def scan_langusge(target = "", target_lang = "") {
     def target_path = sh(script: "find . -name ${target} | head -1", returnStdout: true).trim()
@@ -174,8 +174,8 @@ def env_cluster(cluster = "") {
         throw new RuntimeException("current-context is not match.")
     }
 
-    // target cluster
-    load_variables()
+    // // target cluster
+    // load_variables()
 }
 
 def env_namespace(namespace = "") {
@@ -534,17 +534,17 @@ def scan_helm(cluster = "", namespace = "") {
 }
 
 def scan_images() {
-    if (!chartmuseum) {
-        load_variables()
-    }
+    // if (!chartmuseum) {
+    //     load_variables()
+    // }
     list = sh(script: "curl -X GET https://${registry}/v2/_catalog | jq -r '.repositories[]'", returnStdout: true).trim()
     list
 }
 
 def scan_images_version(image_name = "", latest = false) {
-    if (!chartmuseum) {
-        load_variables()
-    }
+    // if (!chartmuseum) {
+    //     load_variables()
+    // }
     if (latest) {
       list = sh(script: "curl -X GET https://${registry}/v2/${image_name}/tags/list | jq -r '.tags[]' | sort -r | head -n 1", returnStdout: true).trim()
     } else {
@@ -554,17 +554,17 @@ def scan_images_version(image_name = "", latest = false) {
 }
 
 def scan_charts() {
-    if (!chartmuseum) {
-        load_variables()
-    }
+    // if (!chartmuseum) {
+    //     load_variables()
+    // }
     list = sh(script: "curl https://${chartmuseum}/api/charts | jq -r 'keys[]'", returnStdout: true).trim()
     list
 }
 
 def scan_charts_version(mychart = "", latest = false) {
-    if (!chartmuseum) {
-        load_variables()
-    }
+    // if (!chartmuseum) {
+    //     load_variables()
+    // }
     if (latest) {
       list = sh(script: "curl https://${chartmuseum}/api/charts/${mychart} | jq -r '.[].version' | sort -r | head -n 1", returnStdout: true).trim()
     } else {
