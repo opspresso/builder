@@ -57,7 +57,7 @@ def scan(source_lang = "") {
 }
 
 def load_variables() {
-    def path = "./env.groovy"
+    def path = "./data.groovy"
 
     // groovy variables
     sh """
@@ -80,8 +80,8 @@ def load_variables() {
         this.nexus = val.nexus
         this.registry = val.registry
         this.chartmuseum = val.chartmuseum
-        this.harbor = val.harbor
-        this.sonarqube = val.sonarqube
+        // this.harbor = val.harbor
+        // this.sonarqube = val.sonarqube
     }
 }
 
