@@ -16,9 +16,10 @@ def prepare(name = "sample") {
     this.cluster = ""
     this.namespace = ""
 
-    this.slack_token = ""
     this.base_domain = ""
     this.sub_domain = ""
+
+    this.slack_token = ""
 
     this.chartmuseum = ""
     this.harbor = ""
@@ -27,10 +28,10 @@ def prepare(name = "sample") {
     this.registry = ""
     this.sonarqube = ""
 
-    // this.values_home = ""
+    this.values_home = ""
 
-    // // local cluster
-    // load_variables()
+    // local cluster
+    load_variables()
 }
 
 def scan(source_lang = "") {
@@ -55,34 +56,32 @@ def scan(source_lang = "") {
     make_chart()
 }
 
-// def load_variables() {
-//     def path = "./Variables.groovy"
+def load_variables() {
+    // def path = "./Variables.groovy"
 
-//     // groovy variables
-//     sh """
-//         kubectl get secret groovy-variables -n default -o json | jq -r .data.groovy | base64 -d > ${path}
-//         cat ${path} | grep def
-//     """
+    // // groovy variables
+    // sh """
+    //     kubectl get secret groovy-variables -n default -o json | jq -r .data.groovy | base64 -d > ${path}
+    //     cat ${path} | grep def
+    // """
 
-//     if (!fileExists("${path}")) {
-//         echo "load_variables:no file ${path}"
-//         throw new RuntimeException("no file ${path}")
-//     }
+    // if (!fileExists("${path}")) {
+    //     echo "load_variables:no file ${path}"
+    //     throw new RuntimeException("no file ${path}")
+    // }
 
-//     def val = load "${path}"
+    // def val = load "${path}"
 
-//     this.slack_token = val.slack_token
-//     this.base_domain = val.base_domain
+    this.base_domain = binding.getVariables().get("BASE_DOMAIN")
+    this.slack_token = binding.getVariables().get("SLACK_TOKEN")
 
-//     if (val.cluster == "devops") {
-//         this.chartmuseum = val.chartmuseum
-//         this.harbor = val.harbor
-//         this.jenkins = val.jenkins
-//         this.nexus = val.nexus
-//         this.registry = val.registry
-//         this.sonarqube = val.sonarqube
-//     }
-// }
+    this.jenkins = binding.getVariables().get("JENKINS_DOMAIN")
+    this.nexus = binding.getVariables().get("NEXUS_DOMAIN")
+    this.registry = binding.getVariables().get("REGISTRY_DOMAIN")
+    this.chartmuseum = binding.getVariables().get("CHARTMUSEUM_DOMAIN")
+    this.harbor = binding.getVariables().get("HARBOR_DOMAIN")
+    this.sonarqube = binding.getVariables().get("SONARQUBE_DOMAIN")
+}
 
 def scan_langusge(target = "", target_lang = "") {
     def target_path = sh(script: "find . -name ${target} | head -1", returnStdout: true).trim()
