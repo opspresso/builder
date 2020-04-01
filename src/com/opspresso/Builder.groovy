@@ -57,7 +57,7 @@ def scan(source_lang = "") {
 }
 
 def load_variables() {
-    def path = "./env.groovy"
+    def path = "./data.groovy"
 
     // groovy variables
     sh """
@@ -75,22 +75,14 @@ def load_variables() {
     this.base_domain = val.base_domain
     this.slack_token = val.slack_token
 
-    this.jenkins = val.jenkins
-    this.nexus = val.nexus
-    this.registry = val.registry
-    this.chartmuseum = val.chartmuseum
-    this.harbor = val.harbor
-    this.sonarqube = val.sonarqube
-
-    // this.base_domain = binding.getVariables().get("BASE_DOMAIN")
-    // this.slack_token = binding.getVariables().get("SLACK_TOKEN")
-
-    // this.jenkins = binding.getVariables().get("JENKINS_DOMAIN")
-    // this.nexus = binding.getVariables().get("NEXUS_DOMAIN")
-    // this.registry = binding.getVariables().get("REGISTRY_DOMAIN")
-    // this.chartmuseum = binding.getVariables().get("CHARTMUSEUM_DOMAIN")
-    // this.harbor = binding.getVariables().get("HARBOR_DOMAIN")
-    // this.sonarqube = binding.getVariables().get("SONARQUBE_DOMAIN")
+    if (val.role == "devops") {
+        this.jenkins = val.jenkins
+        this.nexus = val.nexus
+        this.registry = val.registry
+        this.chartmuseum = val.chartmuseum
+        // this.harbor = val.harbor
+        // this.sonarqube = val.sonarqube
+    }
 }
 
 def scan_langusge(target = "", target_lang = "") {
