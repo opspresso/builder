@@ -72,6 +72,11 @@ def load_variables() {
 
     // def val = load "${path}"
 
+    // jenkins-env
+    sh """
+        source /var/jenkins/env.sh
+    """
+
     this.base_domain = binding.getVariables().get("BASE_DOMAIN")
     this.slack_token = binding.getVariables().get("SLACK_TOKEN")
 
