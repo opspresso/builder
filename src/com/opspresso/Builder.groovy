@@ -61,7 +61,7 @@ def load_variables() {
 
     // groovy variables
     sh """
-        kubectl get secret jenkins-env -n default -o json | jq -r .env.groovy | base64 -d > ${path}
+        kubectl get secret jenkins-env -n default -o json | jq -r .data.groovy | base64 -d > ${path}
         cat ${path} | grep def
     """
 
