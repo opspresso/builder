@@ -16,9 +16,10 @@ def prepare(name = "sample") {
     this.cluster = ""
     this.namespace = ""
 
-    this.slack_token = ""
     this.base_domain = ""
     this.sub_domain = ""
+
+    this.slack_token = ""
 
     this.chartmuseum = ""
     this.harbor = ""
