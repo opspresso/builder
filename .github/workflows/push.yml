@@ -34,6 +34,7 @@ jobs:
         env:
           USERNAME: ${{ secrets.DOCKER_USERNAME }}
           PASSWORD: ${{ secrets.DOCKER_PASSWORD }}
+          DOCKERFILE: "Dockerfile"
           LATEST: "true"
 
       - name: Docker Push - alpine
@@ -43,7 +44,7 @@ jobs:
         env:
           USERNAME: ${{ secrets.DOCKER_USERNAME }}
           PASSWORD: ${{ secrets.DOCKER_PASSWORD }}
-          BUILD_PATH: "./alpine"
+          DOCKERFILE: "alpine/Dockerfile"
           TAG_POST: "alpine"
 
       - name: Docker Push - kube
@@ -53,5 +54,5 @@ jobs:
         env:
           USERNAME: ${{ secrets.DOCKER_USERNAME }}
           PASSWORD: ${{ secrets.DOCKER_PASSWORD }}
-          BUILD_PATH: "./kube"
+          DOCKERFILE: "kube/Dockerfile"
           TAG_POST: "kube"
