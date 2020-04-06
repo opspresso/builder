@@ -2,7 +2,7 @@
 
 FROM docker
 
-RUN apk add -v --update bash curl python py-pip jq git file tar && \
+RUN apk add -v --update sh bash curl python py-pip jq git file tar && \
     apk add --no-cache -X http://dl-cdn.alpinelinux.org/alpine/edge/testing hub
 
 # awscli
