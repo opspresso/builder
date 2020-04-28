@@ -59,6 +59,9 @@ _prepare() {
 
     # 755
     find ${SHELL_DIR}/** | grep [.]sh | xargs chmod 755
+
+    # messAge
+    echo "$(date +%Y%m%d-%H%M)" > ./target/commit_message
 }
 
 ################################################################################
@@ -86,6 +89,8 @@ _check_version() {
     fi
 
     _result "$(printf '%-30s %-25s %-25s' "${NAME}" "${NOW}" "${NEW}")"
+
+    echo "${NAME} ${NEW}" >> ./target/commit_message
 
     if [ "${NOW}" != "${NEW}" ]; then
         CHANGED=true
