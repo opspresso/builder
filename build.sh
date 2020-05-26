@@ -82,7 +82,8 @@ _check_version() {
 
     NOW=$(cat ${SHELL_DIR}/README.md | grep "ENV ${NAME}" | awk '{print $3}' | xargs)
 
-    NEW=$(curl -sL repo.opspresso.com/latest/${NAME} | xargs)
+    # NEW=$(curl -sL repo.opspresso.com/latest/${NAME} | xargs)
+    NEW=$(curl -sL opspresso.github.io/${NAME}/VERSION | xargs)
 
     if [ -z "${NEW}" ]; then
         return
