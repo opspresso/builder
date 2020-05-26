@@ -12,7 +12,7 @@ RUN pip install --upgrade awscli==${awscli} && \
     rm /var/cache/apk/*
 
 # kubectl
-ENV kubectl v1.17.6
+ENV kubectl v1.18.3
 RUN curl -sLo /usr/local/bin/kubectl https://storage.googleapis.com/kubernetes-release/release/${kubectl}/bin/linux/amd64/kubectl && \
     chmod +x /usr/local/bin/kubectl
 
