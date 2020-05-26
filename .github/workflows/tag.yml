@@ -34,7 +34,8 @@ jobs:
           USERNAME: ${{ secrets.DOCKER_USERNAME }}
           PASSWORD: ${{ secrets.DOCKER_PASSWORD }}
           DOCKERFILE: "alpine/Dockerfile"
-          TAG_NAME: ${{ github.ref }}-alpine
+          TAG_NAME: ${{ github.ref }}
+          TAG_POST: "-alpine"
 
       - name: Docker Push - kube
         uses: opspresso/action-builder@master
@@ -44,4 +45,5 @@ jobs:
           USERNAME: ${{ secrets.DOCKER_USERNAME }}
           PASSWORD: ${{ secrets.DOCKER_PASSWORD }}
           DOCKERFILE: "kube/Dockerfile"
-          TAG_NAME: ${{ github.ref }}-kube
+          TAG_NAME: ${{ github.ref }}
+          TAG_POST: "-kube"
