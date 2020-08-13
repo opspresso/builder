@@ -1,9 +1,11 @@
 name: Build-Tag
 
 on:
-  push:
-    tags:
-      - "*"
+  # push:
+  #   tags:
+  #     - "*"
+  release:
+    types: [published, created, edited]
 
 jobs:
   build:
