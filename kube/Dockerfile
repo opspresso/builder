@@ -12,12 +12,12 @@ RUN pip install --upgrade awscli==${awscli} && \
     rm /var/cache/apk/*
 
 # kubectl
-ENV kubectl v1.20.1
+ENV kubectl v1.20.2
 RUN curl -sLo /usr/local/bin/kubectl https://storage.googleapis.com/kubernetes-release/release/${kubectl}/bin/linux/amd64/kubectl && \
     chmod +x /usr/local/bin/kubectl
 
 # helm
-ENV helm v3.4.2
+ENV helm v3.5.0
 RUN curl -sL https://get.helm.sh/helm-${helm}-linux-amd64.tar.gz | tar xz && \
     mv linux-amd64/helm /usr/local/bin/helm && \
     chmod +x /usr/local/bin/helm
