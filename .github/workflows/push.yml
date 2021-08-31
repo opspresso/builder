@@ -27,3 +27,36 @@ jobs:
           args: --release
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+
+      - name: Docker Push
+        uses: opspresso/action-builder@master
+        with:
+          args: --docker
+        env:
+          USERNAME: ${{ secrets.DOCKER_USERNAME }}
+          PASSWORD: ${{ secrets.DOCKER_PASSWORD }}
+          DOCKERFILE: "Dockerfile"
+          TAG_NAME: ${{ github.ref }}
+          LATEST: "true"
+
+      - name: Docker Push - alpine
+        uses: opspresso/action-builder@master
+        with:
+          args: --docker
+        env:
+          USERNAME: ${{ secrets.DOCKER_USERNAME }}
+          PASSWORD: ${{ secrets.DOCKER_PASSWORD }}
+          DOCKERFILE: "alpine/Dockerfile"
+          TAG_NAME: ${{ github.ref }}
+          TAG_POST: "-alpine"
+
+      - name: Docker Push - kube
+        uses: opspresso/action-builder@master
+        with:
+          args: --docker
+        env:
+          USERNAME: ${{ secrets.DOCKER_USERNAME }}
+          PASSWORD: ${{ secrets.DOCKER_PASSWORD }}
+          DOCKERFILE: "kube/Dockerfile"
+          TAG_NAME: ${{ github.ref }}
+          TAG_POST: "-kube"
