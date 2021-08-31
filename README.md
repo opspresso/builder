@@ -12,7 +12,7 @@ docker pull opspresso/builder
 ## versions
 
 ```
-ENV awscli 2.0.37
+ENV awscli 2.2.30
 ENV kubectl v1.22.1
 ENV helm v3.6.3
 ```
