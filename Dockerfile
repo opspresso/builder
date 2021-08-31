@@ -11,6 +11,13 @@ RUN pip install --upgrade awscli==${awscli} && \
     apk del -v --purge py-pip && \
     rm /var/cache/apk/*
 
+# buildx
+ENV buildx v0.5.1
+RUN curl -sL \
+  --output /usr/lib/docker/cli-plugins/docker-buildx \
+  "https://github.com/docker/buildx/releases/download/v${buildx}/buildx-v${buildx}.linux-amd64"
+RUN chmod a+x /usr/lib/docker/cli-plugins/docker-buildx
+
 COPY .m2/ /root/.m2/
 
 VOLUME /root/.aws
