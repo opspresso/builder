@@ -2,7 +2,7 @@
 
 FROM alpine
 
-RUN apk add -v --update bash curl python py-pip jq git file tar && \
+RUN apk add -v --update bash curl python3 py3-pip jq git file tar && \
     apk add --no-cache -X http://dl-cdn.alpinelinux.org/alpine/edge/testing hub
 
 # awscli
