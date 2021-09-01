@@ -5,7 +5,7 @@ FROM alpine
 ENV GLIBC_VER=2.31-r0
 
 RUN apk --no-cache update && \
-    apk add --no-cache bash curl python3 py3-pip jq git file tar && \
+    apk add --no-cache bash curl python3 py3-pip jq git file tar openssl && \
     apk add --no-cache -X http://dl-cdn.alpinelinux.org/alpine/edge/testing hub
 
 RUN apk --no-cache add \
