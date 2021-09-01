@@ -8,9 +8,7 @@ RUN apk --no-cache update && \
 
 # awscli
 ENV awscli 1.18.43
-RUN pip install --upgrade awscli==${awscli} && \
-    apk del -v --purge py3-pip && \
-    rm /var/cache/apk/*
+RUN pip install --upgrade awscli==${awscli}
 
 # kubectl
 ENV kubectl v1.22.1
