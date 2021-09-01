@@ -74,7 +74,7 @@ _package() {
         _error "Not changed"
     fi
 
-    _check_version "awscli"
+    # _check_version "awscli"
 }
 
 _check_version() {
