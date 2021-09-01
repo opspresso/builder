@@ -1,6 +1,6 @@
 # Dockerfile
 
-FROM docker
+FROM alpine
 
 ENV GLIBC_VER=2.31-r0
 
@@ -30,6 +30,8 @@ RUN apk --no-cache add \
     && rm glibc-${GLIBC_VER}.apk \
     && rm glibc-bin-${GLIBC_VER}.apk \
     && rm -rf /var/cache/apk/*
+
+RUN apk add docker
 
 # buildx
 COPY --from=docker/buildx-bin /buildx /usr/libexec/docker/cli-plugins/docker-buildx
