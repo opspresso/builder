@@ -1,15 +1,9 @@
 name: Build-Tag
 
 on:
-  # release:
-  #   types:
-  #     - created
   push:
     tags:
       - 'v*'
-  # push:
-  #   branches:
-  #     - 'v*'
 
 jobs:
   build:
