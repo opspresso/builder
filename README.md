@@ -12,6 +12,6 @@ docker pull opspresso/builder
 ## versions
 
 ```
-ENV kubectl v1.22.1
-ENV helm v3.6.3
+ENV kubectl v1.22.2
+ENV helm v3.7.0
 ```
