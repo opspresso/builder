@@ -1,2 +1,2 @@
-ENV kubectl v1.22.3
+ENV kubectl v1.22.4
 ENV helm v3.7.1
